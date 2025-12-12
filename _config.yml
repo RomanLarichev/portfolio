@@ -1,0 +1,7 @@
+title: Портфолио разработчика
+description: Мои проекты в веб, мобильной разработке и автоматизации
+theme: jekyll-theme-cayman
+github:
+  is_project_page: false
+show_downloads: false
+google_analytics: 

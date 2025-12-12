@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моё портфолио</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 0; text-align: center; }
+        header h1 { font-size: 3rem; margin-bottom: 1rem; }
+        header p { font-size: 1.2rem; opacity: 0.9; }
+        nav { background: #f8f9fa; padding: 1rem 0; border-bottom: 1px solid #eaeaea; }
+        nav ul { display: flex; justify-content: center; list-style: none; gap: 2rem; }
+        nav a { color: #555; text-decoration: none; font-weight: 500; }
+        section { padding: 4rem 0; }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        .project-card { border: 1px solid #eaeaea; border-radius: 8px; padding: 1.5rem; transition: transform 0.3s, box-shadow 0.3s; }
+        .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .project-card h3 { color: #333; margin-bottom: 0.5rem; }
+        .project-card .tech { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+        .tech-tag { background: #f1f5f9; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem; }
+        footer { background: #333; color: white; text-align: center; padding: 2rem 0; margin-top: 4rem; }
+        @media (max-width: 768px) { nav ul { flex-direction: column; align-items: center; gap: 1rem; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>👨‍💻 Портфолио разработчика</h1>
+            <p>Веб, мобильная разработка, автоматизация и DevOps</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#web">🌐 Веб-проекты</a></li>
+                <li><a href="#mobile">📱 Мобильные</a></li>
+                <li><a href="#scripts">🛠️ Скрипты</a></li>
+                <li><a href="https://github.com/RomanLarichev/portfolio">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <section id="web">
+            <h2 class="section-title">🌐 Веб-проекты</h2>
+            <div class="projects-grid" id="web-projects">
+                <!-- Заполнится автоматически -->
+                <div class="project-card">
+                    <h3>Пример проекта</h3>
+                    <p>Описание проекта</p>
+                    <div class="tech">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="mobile">
+            <h2 class="section-title">📱 Мобильные проекты</h2>
+            <div class="projects-grid" id="mobile-projects">
+                <!-- Заполнится автоматически -->
+            </div>
+        </section>
+        
+        <section id="scripts">
+            <h2 class="section-title">🛠️ Скрипты и утилиты</h2>
+            <div class="projects-grid" id="script-projects">
+                <!-- Заполнится автоматически -->
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>© 2024 Моё портфолио. Все проекты на <a href="https://github.com/RomanLarichev" style="color: #fff;">GitHub</a></p>
+            <p style="opacity: 0.8; margin-top: 1rem; font-size: 0.9rem;">
+                Автоматически обновляется через GitHub Actions
+            </p>
+        </div>
+    </footer>
+    
+    <script>
+        // Этот скрипт будет заполнять проекты автоматически
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Портфолио загружено!');
+            // Пока просто сообщение, потом добавим логику
+        });
+    </script>
+</body>
+</html>

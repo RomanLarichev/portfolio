@@ -54,23 +54,14 @@ jobs:
       - name: Checkout portfolio
         uses: actions/checkout@v4
         
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
       - name: Generate portfolio site
         run: |
-          mkdir -p _site
-          echo "# 🚀 Моё портфолио" > _site/index.html
-          echo "<p>Сгенерировано: $(date)</p>" >> _site/index.html
-          echo "<h2>📁 Проекты:</h2>" >> _site/index.html
-          
-          # Простая генерация HTML списка проектов
-          for dir in web mobile scripts docker; do
-            if [ -d "$dir" ]; then
-              echo "<h3>📂 $dir/</h3>" >> _site/index.html
-              find "$dir" -name "README.md" -o -name "readme.md" | head -5 | while read f; do
-                proj_name=$(dirname "$f" | xargs basename)
-                echo "<li><a href='https://github.com/${{ github.repository }}/tree/main/$(dirname "$f")'>$proj_name</a></li>" >> _site/index.html
-              done
-            fi
-          done
+          node scripts/generate-site.js
           
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

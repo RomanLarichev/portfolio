@@ -1,0 +1,40 @@
+{
+  "projects": {
+    "web": [
+      {
+        "repo": "ваш_логин/название_веб_проекта",
+        "branch": "main",
+        "target": "web/project-name",
+        "description": "Описание веб-проекта",
+        "technologies": ["React", "Node.js"],
+        "auto_sync": true
+      }
+    ],
+    "mobile": [
+      {
+        "repo": "ваш_логин/название_мобильного_приложения",
+        "branch": "main",
+        "target": "mobile/app-name",
+        "description": "Мобильное приложение",
+        "technologies": ["Flutter", "Firebase"],
+        "auto_sync": true
+      }
+    ],
+    "scripts": [
+      {
+        "repo": "ваш_логин/скрипты_автоматизации",
+        "branch": "main",
+        "target": "scripts/automation",
+        "description": "Коллекция скриптов автоматизации",
+        "technologies": ["Python", "Bash", "PowerShell"],
+        "auto_sync": true
+      }
+    ]
+  },
+  "settings": {
+    "sync_schedule": "weekly",
+    "keep_history": false,
+    "cleanup_old": true,
+    "max_projects_per_category": 10
+  }
+}

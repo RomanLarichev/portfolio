@@ -33,7 +33,7 @@ cd file-organizer
 
 # Запустите скрипт
 python file_organizer.py
-
+```
 ## 🛠️ Технологии
 
 - **Python 3.8+**

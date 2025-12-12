@@ -1,35 +1,17 @@
 {
   "projects": {
-    "web": [
-      {
-        "repo": "ваш_логин/название_веб_проекта",
-        "branch": "main",
-        "target": "web/project-name",
-        "description": "Описание веб-проекта",
-        "technologies": ["React", "Node.js"],
-        "auto_sync": true
-      }
-    ],
-    "mobile": [
-      {
-        "repo": "ваш_логин/название_мобильного_приложения",
-        "branch": "main",
-        "target": "mobile/app-name",
-        "description": "Мобильное приложение",
-        "technologies": ["Flutter", "Firebase"],
-        "auto_sync": true
-      }
-    ],
     "scripts": [
       {
-        "repo": "ваш_логин/скрипты_автоматизации",
+        "repo": "RomanLarichev/portfolio",
         "branch": "main",
-        "target": "scripts/automation",
-        "description": "Коллекция скриптов автоматизации",
-        "technologies": ["Python", "Bash", "PowerShell"],
-        "auto_sync": true
+        "target": "scripts/python/file-organizer",
+        "description": "Умный организатор файлов с поиском дубликатов",
+        "technologies": ["Python", "hashlib", "logging", "pathlib"],
+        "auto_sync": false
       }
-    ]
+    ],
+    "web": [],
+    "mobile": []
   },
   "settings": {
     "sync_schedule": "weekly",

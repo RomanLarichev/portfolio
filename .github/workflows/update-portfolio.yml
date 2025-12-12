@@ -1,5 +1,11 @@
 name: Update Portfolio Automatically
 
+# Добавляем permissions для решения проблемы 403
+permissions:
+  contents: write    # Право писать в репозиторий
+  pages: write       # Право публиковать GitHub Pages
+  id-token: write    # Для аутентификации
+
 on:
   schedule:
     # Запускать каждый понедельник в 9:00 UTC
@@ -7,9 +13,6 @@ on:
   workflow_dispatch:  # Позволяет запускать вручную
   push:
     branches: [ main ]
-    paths:
-      - '.github/workflows/update-portfolio.yml'
-      - 'scripts/sync/**'
 
 jobs:
   sync-external-projects:
@@ -19,10 +22,7 @@ jobs:
     steps:
       - name: Checkout portfolio
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT }}
-          fetch-depth: 0
-          
+        
       - name: Setup Git
         run: |
           git config --global user.name "GitHub Actions"
@@ -34,18 +34,15 @@ jobs:
           chmod +x scripts/sync/sync-projects.sh
           ./scripts/sync/sync-projects.sh
           
-      - name: Commit and push if changes
+      - name: Show project structure
         run: |
-          git add .
-          if ! git diff --staged --quiet; then
-            git commit -m "🤖 Auto-update: Sync external projects [$(date +'%Y-%m-%d %H:%M')]"
-            git push origin main
-            echo "✅ Changes pushed successfully"
-          else
-            echo "ℹ️ No changes to commit"
-          fi
+          echo "📁 Структура портфолио:"
+          find . -type f -name "README.md" | sort | while read f; do
+            project_dir=$(dirname "$f")
+            echo "  📂 $project_dir"
+          done
 
-  build-and-deploy:
+  generate-site:
     runs-on: ubuntu-latest
     needs: sync-external-projects
     if: always()
@@ -54,19 +51,197 @@ jobs:
       - name: Checkout portfolio
         uses: actions/checkout@v4
         
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          
-      - name: Generate portfolio site
+      - name: Create portfolio site
         run: |
-          node scripts/generate-site.js
+          mkdir -p _site
+          
+          # Создаем красивый index.html
+          cat > _site/index.html << 'HTML'
+          <!DOCTYPE html>
+          <html lang="ru">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Портфолио Roman Larichev</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      padding: 40px;
+                      line-height: 1.6;
+                      color: #333;
+                  }
+                  header {
+                      text-align: center;
+                      margin-bottom: 60px;
+                      padding: 40px 20px;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      border-radius: 15px;
+                  }
+                  h1 {
+                      font-size: 3em;
+                      margin-bottom: 10px;
+                  }
+                  .projects-grid {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                      gap: 30px;
+                      margin: 40px 0;
+                  }
+                  .project-card {
+                      border: 1px solid #e0e0e0;
+                      border-radius: 15px;
+                      padding: 25px;
+                      background: white;
+                      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                      transition: transform 0.3s, box-shadow 0.3s;
+                  }
+                  .project-card:hover {
+                      transform: translateY(-5px);
+                      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+                  }
+                  .project-card h3 {
+                      margin-top: 0;
+                      color: #2c3e50;
+                      font-size: 1.5em;
+                  }
+                  .tech-stack {
+                      display: flex;
+                      flex-wrap: wrap;
+                      gap: 8px;
+                      margin: 15px 0;
+                  }
+                  .tech-tag {
+                      background: #f1f5f9;
+                      padding: 5px 12px;
+                      border-radius: 20px;
+                      font-size: 0.9em;
+                      color: #4a5568;
+                  }
+                  .project-link {
+                      display: inline-block;
+                      margin-top: 15px;
+                      padding: 10px 20px;
+                      background: #007acc;
+                      color: white;
+                      text-decoration: none;
+                      border-radius: 8px;
+                      font-weight: 500;
+                  }
+                  footer {
+                      margin-top: 60px;
+                      text-align: center;
+                      color: #666;
+                      font-size: 0.9em;
+                      border-top: 1px solid #eee;
+                      padding-top: 20px;
+                  }
+              </style>
+          </head>
+          <body>
+              <header>
+                  <h1>👨‍💻 Портфолио Roman Larichev</h1>
+                  <p>Веб-разработка • Мобильные приложения • Автоматизация</p>
+              </header>
+              
+              <section>
+                  <h2>🛠️ Мои проекты</h2>
+                  <div class="projects-grid">
+                      <!-- Проект File Organizer -->
+                      <div class="project-card">
+                          <h3>🗂️ File Organizer</h3>
+                          <p>Умный организатор файлов с поиском дубликатов и автоматической сортировкой.</p>
+                          
+                          <div class="tech-stack">
+                              <span class="tech-tag">Python</span>
+                              <span class="tech-tag">hashlib</span>
+                              <span class="tech-tag">logging</span>
+                              <span class="tech-tag">pathlib</span>
+                          </div>
+                          
+                          <a href="https://github.com/RomanLarichev/portfolio/tree/main/scripts/python/file-organizer" 
+                             class="project-link" target="_blank">
+                             Посмотреть проект →
+                          </a>
+                      </div>
+                      
+                      <!-- Заглушка для будущих проектов -->
+                      <div class="project-card" style="opacity: 0.7;">
+                          <h3>🌐 Веб-проект</h3>
+                          <p>Скоро здесь появится описание моего веб-проекта.</p>
+                          <div class="tech-stack">
+                              <span class="tech-tag">React</span>
+                              <span class="tech-tag">Node.js</span>
+                          </div>
+                          <div class="project-link" style="background: #ccc;">Скоро</div>
+                      </div>
+                      
+                      <div class="project-card" style="opacity: 0.7;">
+                          <h3>📱 Мобильное приложение</h3>
+                          <p>Скоро здесь появится описание моего мобильного приложения.</p>
+                          <div class="tech-stack">
+                              <span class="tech-tag">Flutter</span>
+                              <span class="tech-tag">Dart</span>
+                          </div>
+                          <div class="project-link" style="background: #ccc;">Скоро</div>
+                      </div>
+                  </div>
+              </section>
+              
+              <section>
+                  <h2>🚀 Технологии</h2>
+                  <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px;">
+                      <span style="background: #3776AB; color: white; padding: 8px 16px; border-radius: 20px;">Python</span>
+                      <span style="background: #61dafb; color: #000; padding: 8px 16px; border-radius: 20px;">React</span>
+                      <span style="background: #339933; color: white; padding: 8px 16px; border-radius: 20px;">Node.js</span>
+                      <span style="background: #02569B; color: white; padding: 8px 16px; border-radius: 20px;">Flutter</span>
+                      <span style="background: #F7DF1E; color: #000; padding: 8px 16px; border-radius: 20px;">JavaScript</span>
+                      <span style="background: #E34F26; color: white; padding: 8px 16px; border-radius: 20px;">HTML/CSS</span>
+                      <span style="background: #4479A1; color: white; padding: 8px 16px; border-radius: 20px;">PostgreSQL</span>
+                  </div>
+              </section>
+              
+              <section style="margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 15px;">
+                  <h2>📞 Контакты</h2>
+                  <p>Свяжитесь со мной для обсуждения проектов или сотрудничества:</p>
+                  <p>
+                      <strong>GitHub:</strong> 
+                      <a href="https://github.com/RomanLarichev">github.com/RomanLarichev</a>
+                  </p>
+                  <p><em>Больше проектов в процессе разработки...</em></p>
+              </section>
+              
+              <footer>
+                  <p>📍 Сайт автоматически развернут через GitHub Actions</p>
+                  <p>📅 Обновлено: <span id="current-date"></span></p>
+                  <p>
+                      <a href="https://github.com/RomanLarichev" style="color: #0366d6;">GitHub профиль</a> • 
+                      <a href="https://github.com/RomanLarichev/portfolio" style="color: #0366d6;">Исходный код портфолио</a>
+                  </p>
+              </footer>
+              
+              <script>
+                  document.getElementById('current-date').textContent = 
+                      new Date().toLocaleDateString('ru-RU', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                      });
+              </script>
+          </body>
+          </html>
+          HTML
+          
+          echo "✅ Сайт создан в папке _site/"
           
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: \${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
           publish_branch: gh-pages
           force_orphan: true

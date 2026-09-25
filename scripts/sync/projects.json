@@ -8,6 +8,30 @@
         "description": "Умный организатор файлов с поиском дубликатов",
         "technologies": ["Python", "hashlib", "logging", "pathlib"],
         "auto_sync": false
+      },
+      {
+        "repo": "RomanLarichev/portfolio",
+        "branch": "main",
+        "target": "scripts/python/telegram_bot_notifier",
+        "description": "Telegram бот для уведомлений и управления задачами",
+        "technologies": ["Python", "aiogram", "SQLite", "FastAPI", "Docker"],
+        "auto_sync": false
+      },
+      {
+        "repo": "RomanLarichev/portfolio", 
+        "branch": "main",
+        "target": "scripts/python/tree_generator",
+        "description": "Генератор древовидной структуры каталогов",
+        "technologies": ["Python", "pathlib", "argparse"],
+        "auto_sync": false
+      },
+      {
+        "repo": "RomanLarichev/portfolio",
+        "branch": "main",
+        "target": "scripts/python/tax_version_checker",
+        "description": "Автоматическая проверка обновлений ПО ФНС, ПФР и Налогоплательщик ЮЛ",
+        "technologies": ["Python", "Requests", "BeautifulSoup4", "YAML", "Schedule", "Chardet"],
+        "auto_sync": false
       }
     ],
     "web": [],

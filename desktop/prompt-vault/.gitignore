@@ -1,0 +1,27 @@
+# Зависимости
+node_modules/
+
+# Сборки Electron и Vite
+dist/
+dist-electron/
+out/
+release/
+
+# Локальные базы данных и бэкапы (ВАЖНО!)
+*.db
+*.db-wal
+*.db-shm
+backups/
+
+# Логи и переменные окружения
+*.log
+.env
+.env.local
+
+# IDE и ОС
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

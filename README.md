@@ -13,6 +13,7 @@
   - Python: Pandas, OpenPyXL, Selenium, Pytest для автоматизации отчётов
   - JavaScript/TypeScript: Playwright, Cypress, Puppeteer для веб-автоматизации
   - Bash: Системные скрипты, cron задачи, автоматизация развёртывания
+  - Десктоп: Electron, Zustand, Tailwind/Ant Design
 
 Инструменты:
   - Docker: Контейнеризация тестовых сред и приложений

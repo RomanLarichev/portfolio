@@ -1,4 +1,3 @@
-```markdown
 # 🛠 QA Data Generator
 
 **Автономный офлайн-инструмент для генерации синтетических тестовых данных**  
@@ -12,6 +11,7 @@
 
 [🇬🇧 English](#english-version) | [🇷🇺 Русский](#русская-версия)
 
+---
 
 # 🇷🇺 Русская версия
 
@@ -31,6 +31,7 @@
 
 Инструмент не претендует на замену Faker или Mockaroo — у них свои сильные стороны и свои задачи. QA Data Generator решает узкий, но часто встречающийся класс задач: **синтетические данные для тестирования систем с российскими реквизитами, с акцентом на валидацию и негативные сценарии.**
 
+---
 
 ## ✨ Возможности
 
@@ -79,6 +80,7 @@
 - Расчётный счёт с **контрольной суммой по ГОСТ Р 58523-2019**
 - SWIFT-код, генерируемый из названия банка
 
+---
 
 ### 🧩 Schema Builder
 
@@ -89,6 +91,7 @@
 - **Custom Pattern** — поле с пользовательским шаблоном
 - Сохраняемые профили (Presets) в localStorage
 
+---
 
 ### 🔐 Password Generator & Meter
 
@@ -110,6 +113,7 @@
 - Проверка соответствия 4 политикам одновременно
 - Отдельный анализатор пользовательских паролей
 
+---
 
 ### 🧩 Custom Pattern Generator
 
@@ -156,6 +160,7 @@ AA-999999                          → QF-572184
 ORD-{{date}}/{{digits:5}}          → ORD-2026-09-30/48291
 ```
 
+---
 
 ### 🧪 QA Tools
 
@@ -179,6 +184,7 @@ ORD-{{date}}/{{digits:5}}          → ORD-2026-09-30/48291
 - Настройка длины (1–10 000) и наборов символов
 - **6 пресетов**: SQL Injection, XSS Payloads, Emoji, Невидимые символы, Переполнение, Unicode
 
+---
 
 ### ✅ Валидатор
 
@@ -194,6 +200,7 @@ ORD-{{date}}/{{digits:5}}          → ORD-2026-09-30/48291
 | Расчётный счёт | 20 цифр, контрольная сумма по ГОСТ |
 | Корр. счёт | 20 цифр, связь с БИК (6-8 цифры) |
 
+---
 
 ### 📦 Batch & Export
 
@@ -215,6 +222,7 @@ ORD-{{date}}/{{digits:5}}          → ORD-2026-09-30/48291
 
 **Preview Table** — табличный просмотр первых 20 записей с подсветкой `NULL` и `""`.
 
+---
 
 ### 🧪 Unit-тесты
 
@@ -233,6 +241,7 @@ ORD-{{date}}/{{digits:5}}          → ORD-2026-09-30/48291
 - Bank (БИК, р/с, к/с)
 - Негативные тесты (сломанные ИНН/СНИЛС/ОГРН не проходят валидацию)
 
+---
 
 ### 🎨 UX
 
@@ -244,6 +253,7 @@ ORD-{{date}}/{{digits:5}}          → ORD-2026-09-30/48291
 - 🌱 **Seed** для 100% воспроизводимости наборов
 - ⚡ Детерминированный UUID при Seed
 
+---
 
 ## 🚀 Сценарии использования
 
@@ -272,6 +282,7 @@ ORD-{{date}}-{{digits:6}}   → ORD-2026-09-30-482917
 ART-{{letters:2}}{{digits:4}} → ART-QF5721
 ```
 
+---
 
 ## 🏗 Архитектура
 
@@ -302,6 +313,7 @@ ART-{{letters:2}}{{digits:4}} → ART-QF5721
 
 Эта структура позволяет легко **распилить файл на модули** при переходе к v3.0.
 
+---
 
 ## 🔒 Безопасность и автономность
 
@@ -314,6 +326,7 @@ ART-{{letters:2}}{{digits:4}} → ART-QF5721
 - ✅ **Защита от SQL-инъекций** — санитизация имён таблиц
 - ✅ **Защита от XML-инъекций** — экранирование в XML/XLS
 
+---
 
 ## 🗺 Roadmap
 
@@ -343,6 +356,7 @@ ART-{{letters:2}}{{digits:4}} → ART-QF5721
 - CLI: `qa-gen --schema crm.json --count 100000 --format sql`
 - Desktop Pro (Tauri): проекты, история, большие датасеты (>1M строк)
 
+---
 
 ## 📊 Сводная таблица возможностей
 
@@ -360,6 +374,7 @@ ART-{{letters:2}}{{digits:4}} → ART-QF5721
 | Вкладок в интерфейсе | 6 |
 | Токенов Pattern Generator | 20+ |
 
+---
 
 ## 🛠 Технологии
 
@@ -371,11 +386,12 @@ ART-{{letters:2}}{{digits:4}} → ART-QF5721
 - **ГОСТ Р 58523-2019** для контрольных сумм р/с
 - **OWASP Cheat Sheet Series** и **NIST SP 800-63B** для password policies
 
+---
 
 ## 📦 Установка
 
 ### Быстрый старт
-1. Скачайте `QA-Data-Generator.html` из раздела **Releases**
+1. Скачайте `qa-data-generator.htm` из раздела **Releases**
 2. Откройте двойным кликом в любом современном браузере
 3. Готово! Никакой установки, никаких зависимостей
 
@@ -383,11 +399,12 @@ ART-{{letters:2}}{{digits:4}} → ART-QF5721
 ```bash
 git clone https://github.com/RomanLarichev/portfolio/tree/main/web/qa-data-generator
 cd qa-data-generator
-# Просто откройте QA-Data-Generator.html в браузере
+# Просто откройте qa-data-generator.htm в браузере
 ```
 
 > Не забудьте заменить `<your-github-username>` на ваш реальный GitHub username.
 
+---
 
 ## 📄 Лицензия
 
@@ -410,6 +427,7 @@ MIT License — свободное использование в коммерч�
 >
 > Названия банков и их реквизиты — синтетические. Для работы с реальными банками используйте официальный справочник БИК ЦБ РФ.
 
+---
 
 ## 🎯 Позиционирование
 
@@ -417,6 +435,7 @@ MIT License — свободное использование в коммерч�
 
 Инструмент не пытается конкурировать с Faker по количеству типов данных. Его сила — в **глубокой специализации** на российских идентификаторах, негативном тестировании и password policies.
 
+---
 
 ## 📸 Скриншоты
 
@@ -435,6 +454,7 @@ MIT License — свободное использование в коммерч�
 **Unit Tests** — встроенный фреймворк самодиагностики:
 ![Unit Tests](screenshots/unit-tests.png)
 
+---
 
 ## 🙏 Благодарности
 
@@ -445,9 +465,9 @@ MIT License — свободное использование в коммерч�
 - **OWASP** — рекомендации по password policies
 - **NIST SP 800-63B** — современные требования к паролям
 
-
 **⭐ Если проект оказался полезен — поставьте звезду на GitHub!**
 
+---
 
 # 🇬🇧 English Version
 
@@ -467,6 +487,7 @@ Tools like Faker and Mockaroo handle the basics well — random names, emails, E
 
 The tool doesn't aim to replace Faker or Mockaroo — they have their own strengths and use cases. QA Data Generator solves a narrow but frequently occurring class of tasks: **synthetic data for testing systems that use Russian business identifiers, with an emphasis on validation and negative scenarios.**
 
+---
 
 ## ✨ Features
 
@@ -558,6 +579,7 @@ Built-in self-diagnostic framework:
 - Inline error details (no modal windows)
 - Progress bar and summary statistics
 
+---
 
 ## 🚀 Use Cases
 
@@ -569,6 +591,7 @@ Built-in self-diagnostic framework:
 6. **Password policy testing** — Password Meter with Legacy, Strong, NIST, Passphrase compliance
 7. **Corporate formats** — order numbers, contracts, SKUs via Custom Pattern Generator
 
+---
 
 ## 🛠 Tech Stack
 
@@ -580,11 +603,12 @@ Built-in self-diagnostic framework:
 - **GOST R 58523-2019** for settlement account checksums
 - **OWASP Cheat Sheet Series** and **NIST SP 800-63B** for password policies
 
+---
 
 ## 📦 Installation
 
 ### Quick Start
-1. Download `QA-Data-Generator.html` from **Releases**
+1. Download `qa-data-generator.htm` from **Releases**
 2. Open with double-click in any modern browser
 3. Done! No installation, no dependencies
 
@@ -592,11 +616,12 @@ Built-in self-diagnostic framework:
 ```bash
 git clone https://github.com/RomanLarichev/portfolio/tree/main/web/qa-data-generator
 cd qa-data-generator
-# Just open QA-Data-Generator.html in your browser
+# Just open qa-data-generator.htm in your browser
 ```
 
 > Replace `<your-github-username>` with your actual GitHub username.
 
+---
 
 ## 🗺 Roadmap
 
@@ -626,6 +651,7 @@ cd qa-data-generator
 - CLI: `qa-gen --schema crm.json --count 100000 --format sql`
 - Desktop Pro (Tauri): projects, history, large datasets (>1M rows)
 
+---
 
 ## 🔒 Security & Autonomy
 
@@ -638,11 +664,13 @@ cd qa-data-generator
 - ✅ **SQL injection protection** — table name sanitization
 - ✅ **XML injection protection** — escaping in XML/XLS
 
+---
 
 ## 📄 License
 
 MIT License — free for commercial and open-source use. Full text in the [`LICENSE`](LICENSE) file.
 
+---
 
 ## ⚠️ Disclaimer
 
@@ -650,6 +678,7 @@ MIT License — free for commercial and open-source use. Full text in the [`LICE
 >
 > Bank names and details are synthetic. For real banks, use the official CBR BIK directory.
 
+---
 
 ## 🎯 Positioning
 
@@ -657,6 +686,7 @@ MIT License — free for commercial and open-source use. Full text in the [`LICE
 
 The tool doesn't compete with Faker on the number of data types. Its strength is in **deep specialization** in Russian identifiers, negative testing, and password policies.
 
+---
 
 ## 📸 Screenshots
 
@@ -675,6 +705,7 @@ The tool doesn't compete with Faker on the number of data types. Its strength is
 **Unit Tests** — built-in self-diagnostic framework:
 ![Unit Tests](screenshots/unit-tests.png)
 
+---
 
 ## 🙏 Acknowledgments
 
@@ -685,6 +716,4 @@ The tool doesn't compete with Faker on the number of data types. Its strength is
 - **OWASP** — password policy recommendations
 - **NIST SP 800-63B** — modern password requirements
 
-
 **⭐ If this project was useful, please star it on GitHub!**
-```

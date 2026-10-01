@@ -1,0 +1,2740 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠</text></svg>">
+<title>QA Data Generator v2.3</title>
+<style>
+:root{--bg:#ebebeb;--surface:#fff;--text:#333;--text-muted:#666;--primary:#5b7a9d;--primary-hover:#4a6580;--success:#5a8a6b;--success-hover:#4a7558;--danger:#a85454;--border:#c0c0c0;--shadow:0 1px 3px rgba(0,0,0,.1);--radius:4px}
+[data-theme="dark"]{--bg:#2a2a2a;--surface:#3a3a3a;--text:#d0d0d0;--text-muted:#999;--primary:#6b8cae;--primary-hover:#5a7a9d;--border:#555;--shadow:0 1px 3px rgba(0,0,0,.3)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:20px;transition:background .3s,color .3s}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px;padding-bottom:15px;border-bottom:2px solid var(--border)}
+.header h1{font-size:22px;font-weight:600;color:var(--primary);display:flex;align-items:center;gap:10px}
+.badge{background:var(--primary);color:#fff;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:600;text-transform:uppercase}
+.tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tab{padding:10px 18px;cursor:pointer;border:none;background:var(--surface);color:var(--text-muted);font-weight:500;font-size:13px;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:var(--bg)}
+.tab:hover{color:var(--text);background:var(--bg)}
+.panel{display:none}.panel.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;margin-bottom:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+.card-header{display:flex;justify-content:space-between;align-items:center}
+.card-title{font-weight:600;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px}
+.value-box{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:10px;font-family:"Consolas","Courier New",monospace;font-size:16px;font-weight:500;text-align:center;word-break:break-all;min-height:42px;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.value-box.invalid{color:var(--danger);border-color:var(--danger);background:rgba(168,84,84,.05)}
+.actions{display:flex;gap:8px}
+.btn{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:3px;font-weight:500;cursor:pointer;transition:all .2s;font-size:13px;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
+.btn-success:hover{background:var(--success-hover)}
+.btn-outline{background:var(--surface);color:var(--text)}
+.btn-outline:hover{background:var(--bg)}
+.btn-danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn-sm{padding:4px 8px;font-size:11px;flex:0 0 auto}
+.controls{background:var(--surface);padding:15px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:15px;display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.control-group{display:flex;flex-direction:column;gap:5px}
+.control-group label{font-size:12px;font-weight:600;color:var(--text-muted)}
+.control-group input,.control-group select{padding:7px 10px;border:1px solid var(--border);border-radius:3px;background:var(--bg);color:var(--text);font-size:13px}
+.toggle-switch{display:flex;align-items:center;gap:8px;cursor:pointer}
+.toggle-switch input{display:none}
+.slider{width:38px;height:20px;background:var(--border);border-radius:20px;position:relative;transition:.3s}
+.slider::before{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.3s}
+.toggle-switch input:checked+.slider{background:var(--success)}
+.toggle-switch input:checked+.slider::before{transform:translateX(18px)}
+.history-list{max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:3px;font-family:monospace;font-size:12px}
+.validator-box{display:flex;gap:8px;margin-bottom:12px}
+.validator-box input,.validator-box select{padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:14px;font-family:monospace;background:var(--bg);color:var(--text)}
+.validation-result{padding:12px;border-radius:3px;font-weight:500;font-size:13px;display:none}
+.validation-result.valid{background:rgba(90,138,107,.1);color:var(--success);border:1px solid var(--success);display:block}
+.validation-result.invalid{background:rgba(168,84,84,.1);color:var(--danger);border:1px solid var(--danger);display:block}
+textarea{width:100%;min-height:180px;padding:12px;border:1px solid var(--border);border-radius:3px;font-family:"Consolas","Courier New",monospace;font-size:12px;background:var(--bg);color:var(--text);resize:vertical}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:12px}
+.preset-btn{padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:3px;cursor:pointer;transition:all .2s;text-align:left}
+.preset-btn:hover{border-color:var(--primary);background:var(--bg)}
+.preset-btn-title{font-weight:600;font-size:13px;margin-bottom:3px}
+.preset-btn-desc{font-size:11px;color:var(--text-muted)}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+.checkbox-label{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px}
+.checkbox-label input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+.boundary-result{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:12px;margin-top:12px}
+.boundary-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-family:monospace;font-size:12px}
+.boundary-item:last-child{border-bottom:none}
+.boundary-label{font-weight:600;color:var(--text-muted);font-size:12px}
+.error-message{background:rgba(168,84,84,.1);color:var(--danger);padding:10px;border-radius:3px;border:1px solid var(--danger);margin-top:10px;font-size:13px;display:none}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--success);color:#fff;padding:12px 20px;border-radius:4px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;z-index:1000}
+.toast.show{opacity:1;transform:translateY(0)}
+.schema-list{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.schema-row{display:grid;grid-template-columns:auto auto 1fr 140px 70px 70px;gap:8px;align-items:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:3px}
+.schema-row.disabled{opacity:.5}
+.schema-row input[type="checkbox"]{width:18px;height:18px;cursor:pointer}
+.schema-row .field-label{font-weight:500;font-size:13px}
+.schema-row input[type="text"],.schema-row input[type="number"]{padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--surface);color:var(--text);font-size:12px;font-family:monospace;width:100%}
+.schema-row input[type="number"]{text-align:right}
+.entity-tabs{display:flex;gap:4px;margin-bottom:12px;background:var(--bg);padding:4px;border-radius:var(--radius);border:1px solid var(--border)}
+.entity-tab{flex:1;padding:8px;text-align:center;cursor:pointer;border-radius:3px;font-size:13px;font-weight:500;transition:all .2s;color:var(--text-muted)}
+.entity-tab.active{background:var(--primary);color:#fff}
+.entity-tab:hover:not(.active){background:var(--surface)}
+.presets-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);align-items:center}
+.preset-chip{padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:15px;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.preset-chip:hover{border-color:var(--primary)}
+.preset-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.preview-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.preview-table th,.preview-table td{padding:6px 10px;border:1px solid var(--border);text-align:left}
+.preview-table th{background:var(--bg);font-weight:600;color:var(--text-muted);position:sticky;top:0}
+.preview-table td{font-family:monospace;font-size:11px;word-break:break-all;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview-table td.null-val{color:var(--text-muted);font-style:italic}
+.preview-wrapper{max-height:400px;overflow:auto;border:1px solid var(--border);border-radius:3px}
+.seed-input{width:120px;font-family:monospace}
+.inline-input{padding:6px 10px;border:1px solid var(--border);border-radius:3px;background:var(--bg);color:var(--text);font-size:13px;width:200px}
+.schema-hint{font-size:11px;color:var(--text-muted);margin-top:4px;font-style:italic}
+
+/* Drag-and-drop стили */
+.schema-row{cursor:grab;user-select:none;transition:background .15s,border-color .15s,opacity .15s,transform .15s}
+.schema-row:active{cursor:grabbing}
+.schema-row.dragging{opacity:.4;transform:scale(.97);background:var(--bg)}
+.schema-row.drag-over{border-color:var(--primary);background:rgba(91,122,157,.08);box-shadow:0 0 0 2px var(--primary)}
+.schema-row.drag-over-above{border-top:3px solid var(--primary)}
+.schema-row.drag-over-below{border-bottom:3px solid var(--primary)}
+.drag-handle{cursor:grab;color:var(--text-muted);font-size:16px;padding:0 4px;display:flex;align-items:center;user-select:none;flex-shrink:0}
+.drag-handle:active{cursor:grabbing}
+.drag-placeholder{border:2px dashed var(--primary);border-radius:3px;background:rgba(91,122,157,.05);min-height:42px;margin:3px 0;transition:all .15s}
+
+/* Test results styles */
+.test-result-row{display:grid;grid-template-columns:2fr 80px 100px 100px 100px auto;gap:10px;align-items:center;padding:10px;border-bottom:1px solid var(--border);font-size:12px}
+.test-result-row:last-child{border-bottom:none}
+.test-result-row:hover{background:var(--bg)}
+.test-name{font-weight:600;color:var(--text)}
+.test-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.test-stat{text-align:center;font-family:monospace}
+.test-stat.pass{color:var(--success)}
+.test-stat.fail{color:var(--danger)}
+.test-status-badge{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;text-align:center}
+.test-status-badge.pass{background:rgba(90,138,107,.15);color:var(--success)}
+.test-status-badge.fail{background:rgba(168,84,84,.15);color:var(--danger)}
+.test-status-badge.running{background:rgba(91,122,157,.15);color:var(--primary)}
+.test-details-btn{padding:4px 8px;font-size:11px;cursor:pointer;border:1px solid var(--border);border-radius:3px;background:var(--surface);color:var(--text)}
+.test-details-btn:hover{background:var(--bg)}
+.test-errors-inline{margin:0 10px 12px 10px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:3px;font-family:monospace;font-size:11px}
+.test-errors-inline>summary{cursor:pointer;font-weight:600;margin-bottom:8px;font-family:"Segoe UI",sans-serif;color:var(--text-muted)}
+
+/* Password strength meter */
+.strength-meter{padding:12px;background:var(--bg);border-radius:3px;border:1px solid var(--border);margin-top:10px}
+.strength-bar{width:100%;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:8px 0}
+.strength-bar-fill{height:100%;transition:width .3s}
+.policy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-top:6px}
+.policy-item{padding:6px 8px;background:var(--surface);border:1px solid var(--border);border-radius:3px;font-size:11px}
+
+.test-error-item{padding:8px;margin:4px 0;background:var(--surface);border-radius:3px;font-family:monospace;font-size:11px;word-break:break-all;border-left:3px solid var(--danger)}
+@media(max-width:900px){.test-result-row{grid-template-columns:1fr;gap:5px}.test-stat{text-align:left}}
+
+@media(max-width:900px){
+    .schema-row{grid-template-columns:auto auto 1fr;gap:6px}
+    .schema-row .field-label{grid-column:3}
+    .schema-row input[type="text"],.schema-row input[type="number"]{grid-column:2/-1}
+    .drag-handle{font-size:20px;padding:4px 8px}
+}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.controls{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>🛠 QA Data Generator <span class="badge">v2.3 OFFLINE</span></h1>
+<button class="btn btn-outline" onclick="toggleTheme()" style="flex:0 0 auto;width:auto">🌓 Тема</button>
+</div>
+
+<div class="tabs">
+<button class="tab active" data-tab="generators">🎲 Генераторы</button>
+<button class="tab" data-tab="batch">📦 Batch & Schema</button>
+<button class="tab" data-tab="qa-tools">🧪 QA Tools</button>
+<button class="tab" data-tab="validator">✅ Валидатор</button>
+<button class="tab" data-tab="history">🕒 История</button>
+<button class="tab" data-tab="tests">🧪 Тесты</button>
+</div>
+
+<!-- ============ PANEL: GENERATORS ============ -->
+<div id="panel-generators" class="panel active">
+<div class="controls">
+<label class="toggle-switch"><input type="checkbox" id="invalidMode" onchange="toggleInvalidMode()"><span class="slider"></span><span style="font-weight:600;font-size:13px">Режим невалидных данных</span></label>
+<div class="control-group"><label>Seed (опционально)</label><input type="number" id="globalSeed" class="seed-input" placeholder="пусто = рандом"></div>
+<button class="btn btn-primary" onclick="generateAll()" style="margin-left:auto;flex:0 0 auto;width:180px">🔄 Сгенерировать всё</button>
+</div>
+
+<div class="grid">
+<div class="card"><div class="card-header"><span class="card-title">UUID v4 (GUID)</span></div><div class="value-box" id="val-uuid">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('uuid')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-uuid',this)">Копировать</button></div></div>
+<div class="card"><div class="card-header"><span class="card-title">ИНН ЮЛ (10)</span></div><div class="value-box" id="val-innul">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('innul')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-innul',this)">Копировать</button></div></div>
+<div class="card"><div class="card-header"><span class="card-title">ИНН ФЛ (12)</span></div><div class="value-box" id="val-innfl">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('innfl')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-innfl',this)">Копировать</button></div></div>
+<div class="card"><div class="card-header"><span class="card-title">СНИЛС</span></div><div class="value-box" id="val-snils">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('snils')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-snils',this)">Копировать</button></div></div>
+<div class="card"><div class="card-header"><span class="card-title">ОГРН (13)</span></div><div class="value-box" id="val-ogrn">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('ogrn')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-ogrn',this)">Копировать</button></div></div>
+<div class="card"><div class="card-header"><span class="card-title">КПП (9)</span></div><div class="value-box" id="val-kpp">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('kpp')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-kpp',this)">Копировать</button></div></div>
+<div class="card"><div class="card-header"><span class="card-title">Паспорт РФ</span></div><div class="value-box" id="val-passport">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('passport')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-passport',this)">Копировать</button></div></div>
+<div class="card"><div class="card-header"><span class="card-title">Телефон РФ</span></div><div class="value-box" id="val-phone">-</div><div class="actions"><button class="btn btn-primary" onclick="gen('phone')">Сгенерировать</button><button class="btn btn-success" onclick="copyValue('val-phone',this)">Копировать</button></div></div>
+
+<div class="card" style="grid-column:1/-1;margin-bottom:15px">
+<div class="card-header"><span class="card-title">🔐 Настройки пароля для генерации</span></div>
+<div class="controls" style="margin-bottom:0">
+<div class="control-group"><label>Политика</label>
+<select id="global-pass-policy">
+<option value="legacy">Legacy Corporate (8-20, 1U, 1L, 1D, 1S)</option>
+<option value="strong">Strong Test (16, all sets)</option>
+<option value="passphrase">Passphrase (4 слова + число)</option>
+<option value="nist">NIST-like (Min 12, no complexity)</option>
+<option value="custom">Custom</option>
+</select></div>
+<div class="control-group"><label>Длина</label><input type="number" id="global-pass-len" value="16" min="4" max="128"></div>
+<div class="control-group"><label>Режим</label>
+<select id="global-pass-mode"><option value="secure">Secure Random</option><option value="seeded">Deterministic (Seed)</option></select></div>
+</div>
+<div class="checkbox-group">
+<label class="checkbox-label"><input type="checkbox" id="global-pass-upper" checked> A-Z</label>
+<label class="checkbox-label"><input type="checkbox" id="global-pass-lower" checked> a-z</label>
+<label class="checkbox-label"><input type="checkbox" id="global-pass-digit" checked> 0-9</label>
+<label class="checkbox-label"><input type="checkbox" id="global-pass-special" checked> Спецсимволы</label>
+<label class="checkbox-label"><input type="checkbox" id="global-pass-no-similar" checked> Исключить O0Il1</label>
+<label class="checkbox-label"><input type="checkbox" id="global-pass-no-repeat"> Без повторов подряд</label>
+</div>
+</div>
+
+<div class="card" style="grid-column:1/-1"><div class="card-header"><span class="card-title">👤 Физическое лицо</span></div>
+<div id="val-person" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;font-family:monospace;font-size:13px"></div>
+<div class="actions" style="margin-top:10px"><button class="btn btn-primary" onclick="genPerson()">Сгенерировать</button><button class="btn btn-success" onclick="copyPerson()">Копировать всё</button></div>
+</div>
+
+<div class="card" style="grid-column:1/-1"><div class="card-header"><span class="card-title">🏢 Организация</span></div>
+<div id="val-company" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;font-family:monospace;font-size:13px"></div>
+<div class="actions" style="margin-top:10px"><button class="btn btn-primary" onclick="genCompany()">Сгенерировать</button><button class="btn btn-success" onclick="copyCompany()">Копировать всё</button></div>
+</div>
+
+<div class="card" style="grid-column:1/-1"><div class="card-header"><span class="card-title">🏠 Адрес РФ</span></div>
+<div id="val-address" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;font-family:monospace;font-size:13px"></div>
+<div class="actions" style="margin-top:10px"><button class="btn btn-primary" onclick="genAddress()">Сгенерировать</button><button class="btn btn-success" onclick="copyAddress()">Копировать всё</button></div>
+</div>
+
+<div class="card" style="grid-column:1/-1">
+<div class="card-header"><span class="card-title">🧩 Custom Pattern Generator</span></div>
+<div class="controls" style="margin-bottom:0">
+<div class="control-group" style="flex:2">
+<label>Шаблон (токены: {{uuid}}, {{date}}, {{inn_fl}}, {{first_name}}, {{digits:6}}, {{number:1:999}}, A=буква, 9=цифра)</label>
+<input type="text" id="pattern-standalone-input" value="EMP-{{date}}-{{digits:6}}" placeholder="Например: ORD-{{date}}-{{digits:6}}" style="font-family:monospace;width:100%">
+</div>
+<div class="control-group">
+<label>Количество</label>
+<input type="number" id="pattern-standalone-count" value="10" min="1" max="100">
+</div>
+<button class="btn btn-primary" onclick="generatePatternStandalone()" style="flex:0 0 auto">🚀 Сгенерировать</button>
+<button class="btn btn-success" onclick="copyPatternResults()" style="flex:0 0 auto">📋 Копировать всё</button>
+</div>
+<div id="pattern-standalone-result" class="boundary-result" style="display:none"></div>
+</div>
+
+<div class="card" style="grid-column:1/-1"><div class="card-header"><span class="card-title">🏦 Банковские реквизиты РФ</span></div>
+<div id="val-bank" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;font-family:monospace;font-size:13px"></div>
+<div class="actions" style="margin-top:10px"><button class="btn btn-primary" onclick="genBank()">Сгенерировать</button><button class="btn btn-success" onclick="copyBank()">Копировать всё</button></div>
+</div>
+</div>
+</div>
+
+<!-- ============ PANEL: BATCH & SCHEMA ============ -->
+<div id="panel-batch" class="panel">
+
+<div class="presets-bar">
+<strong style="font-size:12px;color:var(--text-muted)">Профили:</strong>
+<div id="presets-container" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+<input type="text" id="preset-name-input" class="inline-input" placeholder="Имя нового профиля">
+<button class="btn btn-outline btn-sm" onclick="savePreset()">💾 Сохранить</button>
+<button class="btn btn-outline btn-sm" id="delete-preset-btn" onclick="deletePreset()" style="color:var(--danger);border-color:var(--danger)">🗑 Удалить</button>
+</div>
+
+<div class="card" style="margin-bottom:15px">
+<div class="card-header"><span class="card-title">🧩 Конструктор схемы данных</span></div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Выберите тип сущности, настройте поля, порядок (перетаскиванием за ⠿), имена для экспорта и вероятности NULL/пустых значений.</p>
+
+<div class="entity-tabs">
+<div class="entity-tab active" data-entity="person" onclick="switchEntityType('person')">👤 Физлицо</div>
+<div class="entity-tab" data-entity="company" onclick="switchEntityType('company')">🏢 Юрлицо</div>
+<div class="entity-tab" data-entity="mixed" onclick="switchEntityType('mixed')">🔀 Смешанный</div>
+</div>
+
+<div id="schema-list" class="schema-list"></div>
+
+<div id="password-schema-settings" style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:3px;display:none">
+<div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px">🔐 Настройки генерации паролей (для поля Password в схеме):</div>
+<div class="controls" style="margin-bottom:0">
+<div class="control-group"><label>Политика</label>
+<select id="schema-pass-policy">
+<option value="legacy">Legacy Corporate</option>
+<option value="strong">Strong Test</option>
+<option value="passphrase">Passphrase</option>
+<option value="nist">NIST-like</option>
+<option value="custom">Custom</option>
+</select></div>
+<div class="control-group"><label>Длина</label><input type="number" id="schema-pass-len" value="16" min="4" max="128"></div>
+<div class="control-group"><label>Режим</label>
+<select id="schema-pass-mode"><option value="secure">Secure Random</option><option value="seeded">Deterministic</option></select></div>
+</div>
+<div class="checkbox-group">
+<label class="checkbox-label"><input type="checkbox" id="schema-pass-upper" checked> A-Z</label>
+<label class="checkbox-label"><input type="checkbox" id="schema-pass-lower" checked> a-z</label>
+<label class="checkbox-label"><input type="checkbox" id="schema-pass-digit" checked> 0-9</label>
+<label class="checkbox-label"><input type="checkbox" id="schema-pass-special" checked> Спецсимволы</label>
+<label class="checkbox-label"><input type="checkbox" id="schema-pass-no-similar" checked> Исключить O0Il1</label>
+<label class="checkbox-label"><input type="checkbox" id="schema-pass-no-repeat"> Без повторов</label>
+</div>
+</div>
+
+<div class="schema-hint">💡 NULL % — вероятность вернуть SQL NULL (для JSON — null). Empty % — вероятность вернуть пустую строку "". Работает только при генерации batch. Перетащите за ⠿ для изменения порядка.</div>
+</div>
+
+<div class="controls">
+<div class="control-group"><label>Имя таблицы (SQL/XML)</label><input type="text" id="batch-table" value="test_data"></div>
+<div class="control-group"><label>Количество</label><input type="number" id="batch-count" value="10" min="1" max="1000"></div>
+<div class="control-group"><label>Режим данных</label>
+<select id="batch-mode"><option value="valid">✅ Только валидные</option><option value="invalid">❌ Только невалидные</option><option value="mixed">🔀 Смешанные</option></select>
+</div>
+<div class="control-group" id="mixed-ratio-group" style="display:none"><label>Доля невалидных, %</label><input type="number" id="mixed-ratio" value="10" min="0" max="100"></div>
+<div class="control-group"><label>Seed</label><input type="number" id="batch-seed" class="seed-input" placeholder="пусто = рандом"></div>
+<div class="control-group"><label>Формат экспорта</label>
+<select id="batch-format">
+<option value="json">JSON (.json)</option>
+<option value="csv">CSV (.csv)</option>
+<option value="sql">SQL INSERT (.sql)</option>
+<option value="xml">XML (.xml)</option>
+<option value="xls">Excel (.xls)</option>
+<option value="txt">Текст (.txt)</option>
+</select>
+</div>
+<button class="btn btn-primary" onclick="generateBatch()" style="flex:0 0 auto">🚀 Сгенерировать</button>
+<button class="btn btn-success" onclick="downloadBatch()" style="flex:0 0 auto">💾 Скачать</button>
+<button class="btn btn-outline" onclick="copyBatchOutput()" style="flex:0 0 auto">📋 Копировать</button>
+</div>
+
+<div class="card" style="margin-bottom:15px">
+<div class="card-header"><span class="card-title">👁 Preview (первые 20 записей)</span></div>
+<div class="preview-wrapper"><table class="preview-table" id="preview-table"><thead></thead><tbody></tbody></table></div>
+</div>
+
+<textarea id="batch-output" readonly placeholder="Здесь появится результат в выбранном формате..."></textarea>
+</div>
+
+<!-- ============ PANEL: QA TOOLS ============ -->
+<div id="panel-qa-tools" class="panel">
+
+<div class="card" style="margin-bottom:15px">
+<div class="card-header"><span class="card-title">🔐 Password & Login QA Tools</span></div>
+<div class="controls" style="margin-bottom:0">
+<div class="control-group"><label>Инструмент</label>
+<select id="cred-tool" onchange="updateCredUI()">
+<option value="pass-gen">Генератор паролей</option>
+<option value="pass-boundary">Password Boundary</option>
+<option value="pattern">Custom Pattern (Regex-like)</option>
+</select></div>
+<div class="control-group" id="cred-policy-group"><label>Политика</label>
+<select id="pass-policy">
+<option value="legacy">Legacy Corporate (8-20, 1U, 1L, 1D, 1S)</option>
+<option value="strong">Strong Test (16, all sets)</option>
+<option value="passphrase">Passphrase (4 слова + число)</option>
+<option value="nist">NIST-like (Min 12, no complexity)</option>
+<option value="custom">Custom</option>
+</select></div>
+<div class="control-group" id="cred-len-group"><label>Длина</label><input type="number" id="pass-len" value="16" min="4" max="128"></div>
+<div class="control-group" id="cred-mode-group"><label>Режим</label>
+<select id="pass-mode"><option value="secure">Secure Random</option><option value="seeded">Deterministic (Seed)</option></select></div>
+<button class="btn btn-primary" onclick="generateCredTool()" style="flex:0 0 auto">🚀 Сгенерировать</button>
+</div>
+<div class="checkbox-group" id="cred-opts-group">
+<label class="checkbox-label"><input type="checkbox" id="pass-upper" checked> A-Z</label>
+<label class="checkbox-label"><input type="checkbox" id="pass-lower" checked> a-z</label>
+<label class="checkbox-label"><input type="checkbox" id="pass-digit" checked> 0-9</label>
+<label class="checkbox-label"><input type="checkbox" id="pass-special" checked> Спецсимволы</label>
+<label class="checkbox-label"><input type="checkbox" id="pass-no-similar" checked> Исключить O0Il1</label>
+<label class="checkbox-label"><input type="checkbox" id="pass-no-repeat"> Без повторов подряд</label>
+</div>
+
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+<label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px">🔍 Проверить свой пароль:</label>
+<div style="display:flex;gap:8px">
+<input type="text" id="pass-check-input" placeholder="Введите пароль для анализа..." style="flex:1;padding:8px;border:1px solid var(--border);border-radius:3px;background:var(--bg);color:var(--text);font-family:monospace">
+<button class="btn btn-outline btn-sm" onclick="analyzeCustomPassword()">Анализировать</button>
+</div>
+<div id="pass-check-result" style="margin-top:8px"></div>
+</div>
+
+<div id="cred-error" class="error-message"></div>
+<div id="cred-result" class="boundary-result" style="display:none"></div>
+</div>
+
+<div class="card" style="margin-bottom:15px">
+<div class="card-header"><span class="card-title">🎯 Boundary Value Analyzer</span></div>
+<div class="controls" style="margin-bottom:0">
+<div class="control-group"><label>Тип</label><select id="boundary-type"><option value="number">Числа</option><option value="string">Длина строки</option></select></div>
+<div class="control-group"><label>Минимум</label><input type="number" id="boundary-min" value="1"></div>
+<div class="control-group"><label>Максимум</label><input type="number" id="boundary-max" value="100"></div>
+<button class="btn btn-primary" onclick="generateBoundary()" style="flex:0 0 auto">🎯 Сгенерировать</button>
+</div>
+<div id="boundary-error" class="error-message"></div>
+<div id="boundary-result" class="boundary-result" style="display:none"></div>
+</div>
+
+<div class="card" style="margin-bottom:15px">
+<div class="card-header"><span class="card-title">📅 Date Generator</span></div>
+<div class="controls" style="margin-bottom:0">
+<div class="control-group"><label>Режим</label><select id="date-mode" onchange="updateDateUI()"><option value="valid">Валидные</option><option value="invalid">Невалидные</option><option value="age">Граничные значения возраста</option><option value="range">Диапазон</option><option value="edge">Edge cases</option></select></div>
+<div class="control-group"><label>Формат</label><select id="date-format"><option value="dmy">DD.MM.YYYY</option><option value="iso">YYYY-MM-DD</option><option value="mdy">MM/DD/YYYY</option></select></div>
+<div class="control-group" id="date-age-group" style="display:none"><label>Порог возраста</label><input type="number" id="date-age-threshold" value="18" min="0" max="150"></div>
+<div class="control-group" id="date-range-from-group" style="display:none"><label>От</label><input type="date" id="date-range-from" value="2000-01-01"></div>
+<div class="control-group" id="date-range-to-group" style="display:none"><label>До</label><input type="date" id="date-range-to" value="2026-09-30"></div>
+<div class="control-group" id="date-count-group"><label>Количество</label><input type="number" id="date-count" value="10" min="1" max="100"></div>
+<button class="btn btn-primary" onclick="generateDates()" style="flex:0 0 auto">📅 Сгенерировать</button>
+</div>
+<div id="date-error" class="error-message"></div>
+<div id="date-result" class="boundary-result" style="display:none"></div>
+</div>
+
+<div class="card" style="margin-bottom:15px">
+<div class="card-header"><span class="card-title">🏠 Address Generator (Адреса РФ)</span></div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Валидные, невалидные и edge-case адреса для тестирования форм доставки, регистрации, платёжных систем</p>
+
+<div class="controls" style="margin-bottom:0">
+<div class="control-group"><label>Режим</label>
+<select id="addr-mode">
+<option value="valid">✅ Валидные (полные)</option>
+<option value="valid_parts">✅ По частям (отдельно)</option>
+<option value="invalid">❌ Невалидные</option>
+<option value="edge">⚠️ Edge cases</option>
+</select>
+</div>
+<div class="control-group"><label>Количество</label>
+<input type="number" id="addr-count" value="10" min="1" max="100">
+</div>
+<button class="btn btn-primary" onclick="generateAddresses()" style="flex:0 0 auto">🏠 Сгенерировать</button>
+</div>
+
+<div id="addr-error" class="error-message"></div>
+<div id="addr-result" class="boundary-result" style="display:none"></div>
+</div>
+
+<div class="card">
+<div class="card-header"><span class="card-title">🔤 String Payload Generator</span></div>
+<div class="controls" style="margin-bottom:0">
+<div class="control-group"><label>Длина</label><input type="number" id="string-length" value="32" min="1" max="10000"></div>
+<button class="btn btn-primary" onclick="generateString()" style="flex:0 0 auto">🔤 Сгенерировать</button>
+</div>
+<div class="checkbox-group">
+<label class="checkbox-label"><input type="checkbox" id="str-upper" checked> A-Z</label>
+<label class="checkbox-label"><input type="checkbox" id="str-lower" checked> a-z</label>
+<label class="checkbox-label"><input type="checkbox" id="str-digits" checked> 0-9</label>
+<label class="checkbox-label"><input type="checkbox" id="str-cyrillic"> Кириллица</label>
+<label class="checkbox-label"><input type="checkbox" id="str-emoji"> Emoji</label>
+<label class="checkbox-label"><input type="checkbox" id="str-special"> Спецсимволы</label>
+<label class="checkbox-label"><input type="checkbox" id="str-spaces"> Пробелы</label>
+</div>
+<div id="string-error" class="error-message"></div>
+<div style="margin-top:12px">
+<label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px">Пресеты:</label>
+<div class="preset-grid">
+<div class="preset-btn" onclick="applyPreset('sqli')"><div class="preset-btn-title">💉 SQL Injection</div><div class="preset-btn-desc">' OR 1=1 --</div></div>
+<div class="preset-btn" onclick="applyPreset('xss')"><div class="preset-btn-title">⚠️ XSS Payloads</div><div class="preset-btn-desc">script, onerror</div></div>
+<div class="preset-btn" onclick="applyPreset('emoji')"><div class="preset-btn-title">🚀 Emoji</div><div class="preset-btn-desc">Unicode тест</div></div>
+<div class="preset-btn" onclick="applyPreset('zerowidth')"><div class="preset-btn-title">👻 Невидимые</div><div class="preset-btn-desc">Zero-width, BOM</div></div>
+<div class="preset-btn" onclick="applyPreset('overflow')"><div class="preset-btn-title">💥 Переполнение</div><div class="preset-btn-desc">256-8192 символов</div></div>
+<div class="preset-btn" onclick="applyPreset('unicode')"><div class="preset-btn-title">🌍 Unicode</div><div class="preset-btn-desc">Все алфавиты</div></div>
+</div>
+</div>
+<textarea id="string-output" readonly style="margin-top:12px"></textarea>
+</div>
+</div>
+
+<!-- ============ PANEL: VALIDATOR ============ -->
+<div id="panel-validator" class="panel">
+<div class="card" style="max-width:600px;margin:0 auto">
+<div class="card-header"><span class="card-title">Проверка контрольных сумм</span></div>
+<div class="validator-box">
+<select id="val-type">
+<option value="innul">ИНН ЮЛ</option>
+<option value="innfl">ИНН ФЛ</option>
+<option value="snils">СНИЛС</option>
+<option value="ogrn">ОГРН</option>
+<option value="address">Адрес РФ</option>
+<option value="bic">БИК</option>
+<option value="account">Расчётный счёт</option>
+<option value="corrAccount">Корр. счёт</option>
+</select>
+<input type="text" id="val-input" placeholder="Введите значение..." oninput="validateInput()">
+</div>
+<div id="val-result" class="validation-result"></div>
+</div>
+</div>
+
+<!-- ============ PANEL: HISTORY ============ -->
+<div id="panel-history" class="panel">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<h3 style="font-size:16px;font-weight:600">История генераций</h3>
+<button class="btn btn-outline" onclick="clearHistory()" style="width:auto;color:var(--danger);border-color:var(--danger)">🗑 Очистить</button>
+</div>
+<div class="history-list" id="history-container"><div style="text-align:center;color:var(--text-muted);padding:20px">История пуста</div></div>
+</div>
+
+<!-- ============ PANEL: TESTS ============ -->
+<div id="panel-tests" class="panel">
+<div class="card" style="margin-bottom:15px">
+<div class="card-header">
+<span class="card-title">🧪 Unit-тесты генераторов</span>
+<span id="test-status" style="font-size:12px;color:var(--text-muted)">Готов к запуску</span>
+</div>
+<p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">
+Автоматическая проверка корректности генераторов: 10 000 итераций на каждый тест. Проверяется валидность, структура, контрольные суммы и согласованность данных.
+</p>
+
+<div class="controls" style="margin-bottom:0">
+<div class="control-group">
+<label>Итераций на тест</label>
+<input type="number" id="test-iterations" value="10000" min="100" max="100000" step="100">
+</div>
+<button class="btn btn-primary" onclick="TestRunner.runAll()" style="flex:0 0 auto">🚀 Запустить все тесты</button>
+<button class="btn btn-outline" onclick="TestRunner.clearResults()" style="flex:0 0 auto">🗑 Очистить результаты</button>
+</div>
+
+<div id="test-progress" style="margin-top:15px;display:none">
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+<span id="test-progress-label">Выполняется...</span>
+<span id="test-progress-percent">0%</span>
+</div>
+<div style="width:100%;height:8px;background:var(--border);border-radius:4px;overflow:hidden">
+<div id="test-progress-bar" style="height:100%;background:var(--primary);width:0%;transition:width .3s"></div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header">
+<span class="card-title">📊 Результаты тестов</span>
+<div id="test-summary" style="font-size:12px"></div>
+</div>
+<div id="test-results" style="margin-top:10px">
+<div style="text-align:center;color:var(--text-muted);padding:40px;font-size:13px">
+Нажмите «Запустить все тесты» для начала проверки
+</div>
+</div>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ============================================================
+ *  SECTION 1: CORE HELPERS
+ * ============================================================ */
+function escapeXml(s){return String(s==null?'':s).replace(/[<>&'"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]})}
+function escapeHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function copyToClipboard(text){var t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.left='-9999px';document.body.appendChild(t);t.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(t);return ok}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)}
+function copyValue(id,btn){var t=document.getElementById(id).innerText;if(!t||t==='-')return;if(copyToClipboard(t)){var o=btn.innerText;btn.innerText='✓ Скопировано';setTimeout(function(){btn.innerText=o},1500);showToast('Скопировано')}}
+
+/* ============================================================
+ *  SECTION 2: SEEDABLE PRNG (mulberry32)
+ * ============================================================ */
+var _rng=null;
+function setSeed(seed){if(seed===null||seed===undefined||isNaN(seed)){_rng=null}else{_rng=mulberry32(seed|0)}}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function rnd(){return _rng?_rng():Math.random()}
+function rndInt(min,max){return Math.floor(rnd()*(max-min+1))+min}
+function rndPick(arr){return arr[Math.floor(rnd()*arr.length)]}
+
+/* ============================================================
+ *  SECTION 3: DICTIONARIES
+ * ============================================================ */
+var DICT={
+    surnames_m:['Иванов','Петров','Сидоров','Смирнов','Кузнецов','Попов','Васильев','Соколов','Михайлов','Новиков','Фёдоров','Морозов','Волков','Алексеев','Лебедев','Семёнов','Егоров','Павлов','Козлов','Степанов','Николаев','Орлов','Андреев','Макаров','Никитин','Захаров','Зайцев','Соловьёв','Борисов','Яковлев','Григорьев','Романов','Воробьёв','Сергеев','Кузьмин','Фролов','Александров','Дмитриев','Королёв','Гусев','Киселёв','Ильин','Максимов','Поляков','Сорокин','Виноградов','Ковалёв','Белов','Медведев','Рябов'],
+    surnames_f:['Иванова','Петрова','Сидорова','Смирнова','Кузнецова','Попова','Васильева','Соколова','Михайлова','Новикова','Фёдорова','Морозова','Волкова','Алексеева','Лебедева','Семёнова','Егорова','Павлова','Козлова','Степанова','Николаева','Орлова','Андреева','Макарова','Никитина','Захарова','Зайцева','Соловьёва','Борисова','Яковлева','Григорьева','Романова','Воробьёва','Сергеева','Кузьмина','Фролова','Александрова','Дмитриева','Королёва','Гусева','Киселёва','Ильина','Максимова','Полякова','Сорокина','Виноградова','Ковалёва','Белова','Медведева','Рябова'],
+    firstnames_m:['Александр','Дмитрий','Максим','Сергей','Андрей','Алексей','Артём','Илья','Кирилл','Михаил','Никита','Матвей','Роман','Егор','Арсений','Иван','Денис','Евгений','Тимофей','Владислав','Игорь','Владимир','Павел','Руслан','Марк','Константин','Тимур','Олег','Ярослав','Антон','Николай','Даниил','Степан','Фёдор','Юрий','Виктор','Глеб','Георгий','Виталий','Анатолий'],
+    firstnames_f:['Анастасия','Мария','Анна','Виктория','Дарья','Елизавета','Полина','Софья','Александра','Алина','Ксения','Екатерина','Вероника','Юлия','Марина','Валерия','Евгения','Ульяна','Ирина','Ольга','Наталья','Татьяна','Светлана','Людмила','Галина','Маргарита','Карина','Диана','Ангелина','Варвара','Арина','Яна','Кристина','Василиса','Алёна','Елена','Зоя','Лариса','Надежда','Тамара'],
+    patronymics_m:['Александрович','Дмитриевич','Сергеевич','Михайлович','Андреевич','Алексеевич','Ильич','Николаевич','Владимирович','Евгеньевич','Иванович','Петрович','Юрьевич','Константинович','Викторович','Павлович','Романович','Олегович','Фёдорович','Степанович','Анатольевич','Васильевич','Геннадьевич','Борисович','Максимович'],
+    patronymics_f:['Александровна','Дмитриевна','Сергеевна','Михайловна','Андреевна','Алексеевна','Ильинична','Николаевна','Владимировна','Евгеньевна','Ивановна','Петровна','Юрьевна','Константиновна','Викторовна','Павловна','Романовна','Олеговна','Фёдоровна','Степановна','Анатольевна','Васильевна','Геннадьевна','Борисовна','Максимовна'],
+    legalForms:['ООО','АО','ПАО','ООО','ООО','АО','ООО'],
+    
+    companyNounsByGender:{
+        m:['Проект','Инжиниринг','Сервис','Консалтинг','Альянс','Стандарт','Строй','Вектор','Ресурс','Траст','Холдинг','Трест','Концерн','Банк','Фонд'],
+        f:['Логистика','Группа','Автоматика','Механика','Энергетика','Интеграция','Корпорация','Компания','Фирма','Ассоциация','Компания','Организация','Сеть','Фабрика'],
+        n:['Развитие','Решение','Предприятие','Агентство','Объединение','Бюро','Партнёрство','Дело','Наследие','Производство'],
+        p:['Технологии','Системы','Ресурсы','Инвестиции','Коммуникации','Инновации','Разработки','Производства','Услуги','Материалы','Компоненты','Изделия','Конструкции','Машины']
+    },
+    
+    companyAdjByGender:{
+        m:['Северный','Цифровой','Новый','Промышленный','Городской','Национальный','Векторный','Современный','Инновационный','Перспективный','Глобальный','Технологический','Стратегический','Оптимальный','Ключевой','Ведущий','Передовой','Устойчивый','Эффективный','Надёжный'],
+        f:['Северная','Цифровая','Новая','Промышленная','Городская','Национальная','Векторная','Современная','Инновационная','Перспективная','Глобальная','Технологическая','Стратегическая','Оптимальная','Ключевая','Ведущая','Передовая','Устойчивая','Эффективная','Надёжная'],
+        n:['Северное','Цифровое','Новое','Промышленное','Городское','Национальное','Векторное','Современное','Инновационное','Перспективное','Глобальное','Технологическое','Стратегическое','Оптимальное','Ключевое','Ведущее','Передовое','Устойчивое','Эффективное','Надёжное'],
+        p:['Северные','Цифровые','Новые','Промышленные','Городские','Национальные','Векторные','Современные','Инновационные','Перспективные','Глобальные','Технологические','Стратегические','Оптимальные','Ключевые','Ведущие','Передовые','Устойчивые','Эффективные','Надёжные']
+    },
+    
+    emailDomains:['example.test','mail.test','corp.test','qa.local'],
+
+    /* === Passphrase словарь для генератора паролей === */
+    passWords:['солнце','ветер','дерево','камень','река','море','гора','лес','поле','огонь','вода','земля','небо','звезда','луна','цветок','птица','зверь','рыба','дом','окно','дверь','стол','стул','книга','ручка','бумага','стена','пол','потолок','мост','путь','дорога','берег','остров','сад','лебедь','сокол','тигр','лев','медведь','лиса','волк','заяц','кот','пёс','конь','корова','овца','коза','свинья','курица','петух','утка','гусь'],
+
+    regions:[
+        {code:'77',name:'Москва',city:'г. Москва',zip:'10'},
+        {code:'78',name:'Санкт-Петербург',city:'г. Санкт-Петербург',zip:'19'},
+        {code:'50',name:'Московская область',city:'г. Балашиха',zip:'14'},
+        {code:'23',name:'Краснодарский край',city:'г. Краснодар',zip:'35'},
+        {code:'16',name:'Республика Татарстан',city:'г. Казань',zip:'42'},
+        {code:'66',name:'Свердловская область',city:'г. Екатеринбург',zip:'62'},
+        {code:'54',name:'Новосибирская область',city:'г. Новосибирск',zip:'63'},
+        {code:'34',name:'Волгоградская область',city:'г. Волгоград',zip:'40'},
+        {code:'61',name:'Ростовская область',city:'г. Ростов-на-Дону',zip:'34'},
+        {code:'02',name:'Республика Башкортостан',city:'г. Уфа',zip:'45'},
+        {code:'52',name:'Нижегородская область',city:'г. Нижний Новгород',zip:'60'},
+        {code:'74',name:'Челябинская область',city:'г. Челябинск',zip:'45'},
+        {code:'55',name:'Омская область',city:'г. Омск',zip:'64'},
+        {code:'63',name:'Самарская область',city:'г. Самара',zip:'44'},
+        {code:'42',name:'Кемеровская область',city:'г. Кемерово',zip:'65'},
+        {code:'36',name:'Воронежская область',city:'г. Воронеж',zip:'39'},
+        {code:'24',name:'Красноярский край',city:'г. Красноярск',zip:'66'},
+        {code:'25',name:'Приморский край',city:'г. Владивосток',zip:'69'},
+        {code:'39',name:'Калининградская область',city:'г. Калининград',zip:'23'},
+        {code:'51',name:'Мурманская область',city:'г. Мурманск',zip:'18'}
+    ],
+
+    /* === ИСПРАВЛЕНО: словари улиц структурированы по грамматическому роду === */
+    streetTypesByGender: {
+        m: ['пр-кт', 'пер.', 'бул.', 'пр.', 'пр-д', 'тракт', 'мкр.'],
+        f: ['ул.', 'наб.', 'аллея'],
+        n: ['ш.'],
+        inv: ['ул.', 'пр-кт', 'пер.', 'бул.', 'пр.', 'наб.', 'аллея', 'ш.', 'пр-д', 'тракт', 'мкр.']
+    },
+    streetNamesByGender: {
+        m: ['Ленинский', 'Советский', 'Центральный', 'Молодёжный', 'Школьный', 'Новый', 'Садовый', 'Лесной', 'Стадионный', 'Заречный', 'Октябрьский', 'Первомайский', 'Промышленный', 'Тихий', 'Парковый'],
+        f: ['Советская', 'Центральная', 'Молодёжная', 'Школьная', 'Новая', 'Садовая', 'Лесная', 'Набережная', 'Стадионная', 'Заречная', 'Октябрьская', 'Первомайская', 'Промышленная', 'Цветочная', 'Берёзовая', 'Кленовая', 'Дубовая', 'Рябиновая', 'Сиреневая', 'Весенняя', 'Летняя', 'Осенняя', 'Зимняя', 'Полевая', 'Луговая', 'Речная', 'Ключевая', 'Родниковая', 'Тихая'],
+        n: ['Варшавское', 'Ленинградское', 'Можайское', 'Волоколамское', 'Дмитровское', 'Новое', 'Центральное', 'Шоссе Энтузиастов'],
+        inv: ['Ленина', 'Мира', 'Гагарина', 'Пушкина', 'Гоголя', 'Чехова', 'Толстого', 'Достоевского', 'Кирова', 'Победы', 'Космонавтов', 'Мичурина', 'Павлова', 'Королева', 'Жуковского', 'Менделеева', 'Бажова', 'Тургенева', 'Некрасова', 'Есенина', 'Маяковского', 'Блока', 'Ахматовой']
+    },
+
+    citySpecificStreets:{
+        'г. Москва':['Тверская','Арбат','Новый Арбат','Покровка','Варварка','Кузнецкий Мост','Остоженка','Пречистенка','Пятницкая','Якиманка','Профсоюзная','Ленинский проспект','Кутузовский проспект','Можайское шоссе','Рублёвское шоссе','Варшавское шоссе','Ленинградский проспект','Щёлковское шоссе','МКАД','Сарьинский пруд'],
+        'г. Санкт-Петербург':['Невский проспект','Литейный проспект','Московский проспект','Вознесенский проспект','Загородный проспект','Каменоостровский проспект','Ленсовета','Бабушкина','Коллонтай','Большой проспект В.О.','Средний проспект В.О.','Литейная','Пулковская','Петроградская','Василеостровская']
+    },
+
+    /* === БАНКОВСКИЕ РЕКВИЗИТЫ РФ (используется только для режима useRealBic) === */
+    banks:[
+        {bic:'044525225',name:'ПАО Сбербанк',corrAccount:'30101810400000000225',city:'Москва'},
+        {bic:'044525974',name:'Банк ВТБ (ПАО)',corrAccount:'30101810145250000974',city:'Москва'},
+        {bic:'044525593',name:'АО «Альфа-Банк»',corrAccount:'30101810200000000593',city:'Москва'},
+        {bic:'044525560',name:'Тинькофф Банк (АО)',corrAccount:'30101810145250000560',city:'Москва'},
+        {bic:'044525823',name:'ПАО «Газпромбанк»',corrAccount:'30101810200000000823',city:'Москва'},
+        {bic:'044525716',name:'ПАО «Промсвязьбанк»',corrAccount:'30101810400000000716',city:'Москва'},
+        {bic:'044525186',name:'АО «Райффайзенбанк»',corrAccount:'30101810200000000186',city:'Москва'},
+        {bic:'044525256',name:'ПАО «Россельхозбанк»',corrAccount:'30101810200000000256',city:'Москва'},
+        {bic:'044525999',name:'ПАО Банк «ФК Открытие»',corrAccount:'30101810845250000999',city:'Москва'},
+        {bic:'044525423',name:'АО «Совкомбанк»',corrAccount:'30101810945250000423',city:'Москва'},
+        {bic:'042985679',name:'КБ «Кубань Кредит» (ООО)',corrAccount:'30101810000000000679',city:'Краснодар'},
+        {bic:'044030653',name:'ПАО Банк «ФК Открытие»',corrAccount:'30101810845250000653',city:'Екатеринбург'},
+        {bic:'044525702',name:'АО «ЮниКредит Банк»',corrAccount:'30101810500000000702',city:'Москва'},
+        {bic:'044525347',name:'АО «Росбанк»',corrAccount:'30101810200000000347',city:'Москва'},
+        {bic:'044525297',name:'АО «СМП Банк»',corrAccount:'30101810500000000297',city:'Москва'},
+        {bic:'046577674',name:'ПАО «Сбербанк» (Новосибирск)',corrAccount:'30101810500000000674',city:'Новосибирск'},
+        {bic:'042748615',name:'ПАО «Сбербанк» (Казань)',corrAccount:'30101810200000000615',city:'Казань'},
+        {bic:'040349698',name:'ПАО «Сбербанк» (Уфа)',corrAccount:'30101810300000000698',city:'Уфа'},
+        {bic:'044030718',name:'ПАО «Сбербанк» (Екатеринбург)',corrAccount:'30101810900000000718',city:'Екатеринбург'},
+        {bic:'042525694',name:'ПАО «Сбербанк» (Волгоград)',corrAccount:'30101810700000000694',city:'Волгоград'}
+    ],
+
+    accountTypes:{
+        legal:'40702',
+        legalNC:'40802',
+        ip:'40701',
+        individual:'40817',
+        budget:'40101',
+        deposit:'42101',
+        loan:'45501',
+        bank:'30101'
+    },
+
+    currencies:{
+        RUB:'643',
+        USD:'840',
+        EUR:'978',
+        CNY:'156',
+        GBP:'826',
+        KZT:'398'
+    }
+};
+
+/* ============================================================
+ *  SECTION 4: BASE GENERATORS
+ * ============================================================ */
+var Gen={
+    /* === детерминированный UUID при заданном Seed === */
+    uuid:function(){
+        if(_rng){ // Если задан Seed, генерируем детерминированный UUID
+            var h='0123456789abcdef',u='';
+            for(var i=0;i<36;i++){
+                if(i===8||i===13||i===18||i===23)u+='-';
+                else if(i===14)u+='4';
+                else if(i===19)u+=h[(rndInt(0,3)|8)];
+                else u+=h[rndInt(0,15)];
+            }
+            return u.toUpperCase();
+        }
+        try{if(typeof crypto!=='undefined'&&crypto.randomUUID)return crypto.randomUUID().toUpperCase()}catch(e){}
+        return'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=rndInt(0,15);var v=c==='x'?r:(r&0x3|0x8);return v.toString(16).toUpperCase()})
+    },
+    innul:function(invalid){invalid=invalid||false;var inn=''+(rndInt(1,9));for(var i=0;i<8;i++)inn+=rndInt(0,9);var w=[2,4,10,3,5,9,4,6,8];var s=0;for(var i=0;i<9;i++)s+=parseInt(inn[i])*w[i];var c=(s%11)%10;if(invalid)c=(c+1)%10;return inn+c},
+    innfl:function(invalid){invalid=invalid||false;var inn=''+(rndInt(1,9));for(var i=0;i<9;i++)inn+=rndInt(0,9);var w11=[7,2,4,10,3,5,9,4,6,8];var s11=0;for(var i=0;i<10;i++)s11+=parseInt(inn[i])*w11[i];var n11=(s11%11)%10;var w12=[3,7,2,4,10,3,5,9,4,6,8];var s12=0;for(var i=0;i<10;i++)s12+=parseInt(inn[i])*w12[i];s12+=n11*8;var n12=(s12%11)%10;if(invalid)n12=(n12+1)%10;return inn+n11+n12},
+    snils:function(invalid){invalid=invalid||false;var s='';for(var i=0;i<9;i++)s+=rndInt(0,9);var sum=0;for(var i=0;i<9;i++)sum+=parseInt(s[i])*(9-i);var c=0;if(sum<100)c=sum;else if(sum===100||sum===101)c=0;else{c=sum%101;if(c===100)c=0}if(invalid)c=(c+1)%101;var cs=c<10?'0'+c:''+c;return s.substr(0,3)+'-'+s.substr(3,3)+'-'+s.substr(6,3)+' '+cs},
+    ogrn:function(invalid){invalid=invalid||false;var s=''+(rndInt(1,9));for(var i=0;i<11;i++)s+=rndInt(0,9);var r=(parseInt(s,10)%11)%10;if(invalid)r=(r+1)%10;return s+r},
+    kpp:function(){
+        var regs=['77','78','50','23','16','66','54','34','61','02'];
+        var r=rndPick(regs);
+        var t=rndInt(1,99);
+        var ts=t<10?'0'+t:''+t;
+        var reasons=['01','43','45','01','09'];
+        var reason=rndPick(reasons);
+        var seq=rndInt(1,999);
+        var seqs=seq<10?'00'+seq:(seq<100?'0'+seq:''+seq);
+        return r+ts+reason+seqs;
+    },
+    passport:function(){var s1=''+(rndInt(10,99));var s2=''+(rndInt(10,99));var n=''+(rndInt(100000,999999));return s1+s2+' '+n},
+    phone:function(){var codes=['916','903','926','999','985','910','909','925','915','921'];var c=rndPick(codes);var p1=''+rndInt(100,999);var p2=''+rndInt(10,99);var p3=''+rndInt(10,99);return'+7 '+c+' '+p1+'-'+p2+'-'+p3},
+    email:function(name){if(name){return name+'@'+rndPick(DICT.emailDomains)}var n=rndPick(['ivanov','petrov','sidorov','test','qa','user','dev'])+'.'+rndInt(1,999);return n+'@'+rndPick(DICT.emailDomains)}
+};
+
+/* ============================================================
+ *  SECTION 4.5: PATTERN GENERATOR (extended)
+ * ============================================================ */
+function processPatternLiterals(text){
+    return text.replace(/A/g,function(){return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[rndInt(0,25)]})
+               .replace(/9/g,function(){return ''+rndInt(0,9)});
+}
+function processPatternToken(token){
+    if(token==='uuid')return Gen.uuid();
+    if(token==='date'){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1<10?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate()}
+    if(token==='time'){var d=new Date();return (d.getHours()<10?'0':'')+d.getHours()+'-'+(d.getMinutes()<10?'0':'')+d.getMinutes()+'-'+(d.getSeconds()<10?'0':'')+d.getSeconds()}
+    if(token==='inn_fl')return Gen.innfl(false);
+    if(token==='inn_ul')return Gen.innul(false);
+    if(token==='snils')return Gen.snils(false);
+    if(token==='ogrn')return Gen.ogrn(false);
+    if(token==='kpp')return Gen.kpp();
+    if(token==='phone')return Gen.phone();
+    if(token==='passport')return Gen.passport();
+    if(token==='first_name'||token==='last_name'||token==='middle_name'||token==='full_name'){
+        if(!generatePattern._cachedPerson)generatePattern._cachedPerson=Person.generate({});
+        var p=generatePattern._cachedPerson;
+        if(token==='first_name')return p.firstName;
+        if(token==='last_name')return p.lastName;
+        if(token==='middle_name')return p.middleName;
+        return p.fullName;
+    }
+    if(token==='company_name'||token==='company_short'||token==='company_inn'||token==='company_kpp'||token==='company_ogrn'){
+        if(!generatePattern._cachedCompany)generatePattern._cachedCompany=Company.generate({});
+        var c=generatePattern._cachedCompany;
+        if(token==='company_name')return c.name;
+        if(token==='company_short')return c.shortName;
+        if(token==='company_inn')return c.inn;
+        if(token==='company_kpp')return c.kpp;
+        return c.ogrn;
+    }
+    var m=token.match(/^(\w+):(\d+)(?::(\d+))?$/);
+    if(m){
+        var type=m[1],a=parseInt(m[2],10),b=m[3]?parseInt(m[3],10):null;
+        if(type==='DIGIT'||type==='digits'){var s='';var len=b||a;for(var i=0;i<len;i++)s+=rndInt(0,9);return s}
+        if(type==='LETTER'||type==='letters'){var s='';var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ';var len=b||a;for(var i=0;i<len;i++)s+=chars[rndInt(0,25)];return s}
+        if(type==='number'){if(b!==null)return rndInt(a,b).toString();return rndInt(0,a).toString()}
+    }
+    return '{{'+token+'}}';
+}
+function generatePattern(pattern){
+    if(!pattern)return'';
+    var result='';
+    var lastIdx=0;
+    var regex=/\{\{(.*?)\}\}/g;
+    var match;
+    while((match=regex.exec(pattern))!==null){
+        result+=processPatternLiterals(pattern.substring(lastIdx,match.index));
+        result+=processPatternToken(match[1]);
+        lastIdx=regex.lastIndex;
+    }
+    result+=processPatternLiterals(pattern.substring(lastIdx));
+    return result;
+}
+
+/* ============================================================
+ *  SECTION 5: PERSON ENTITY
+ * ============================================================ */
+var Person={
+    generate:function(opts){
+        opts=opts||{};
+        var gender=opts.gender||(rnd()<0.5?'male':'female');
+        if(gender==='random')gender=rnd()<0.5?'male':'female';
+        var lastName=gender==='male'?rndPick(DICT.surnames_m):rndPick(DICT.surnames_f);
+        var firstName=gender==='male'?rndPick(DICT.firstnames_m):rndPick(DICT.firstnames_f);
+        var middleName=gender==='male'?rndPick(DICT.patronymics_m):rndPick(DICT.patronymics_f);
+        var fullName=lastName+' '+firstName+' '+middleName;
+        var shortName=lastName+' '+firstName.substr(0,1)+'.'+middleName.substr(0,1)+'.';
+        var translit=this.transliterate(firstName)+'.'+this.transliterate(lastName);
+        var birthDate=this.randomBirthDate();
+        
+        var style=opts.loginStyle||'first.last', sep=opts.loginSep||'.';
+        var f=translit.split('.')[0], l=translit.split('.')[1]||'user';
+        var login='';
+        if(style==='first.last')login=f+sep+l;
+        else if(style==='last.first')login=l+sep+f;
+        else if(style==='f.last')login=f.substr(0,1)+sep+l;
+        else if(style==='last.f')login=l+sep+f.substr(0,1);
+        else if(style==='compact')login=f+l;
+        else if(style==='numbered')login=l+sep+f.substr(0,1)+rndInt(10,99);
+        else if(style==='random')login='qa_'+Math.random().toString(36).substr(2,6);
+        
+        if(opts.invalidLogin){
+            var neg=['admin','root','null',' ','  ','<script>','иванов','a','user@name',' leading','trailing '];
+            login=rndPick(neg);
+        }else{
+            login=login.toLowerCase();
+        }
+        
+        return{
+            gender:gender, lastName:lastName, firstName:firstName, middleName:middleName,
+            fullName:fullName, shortName:shortName, birthDate:birthDate,
+            inn:Gen.innfl(opts.invalid), snils:Gen.snils(opts.invalid),
+            passport:Gen.passport(), phone:Gen.phone(),
+            email:translit.toLowerCase()+'@'+rndPick(DICT.emailDomains),
+            login:login,
+            password:this.generatePassword(opts)
+        };
+    },
+    generatePassword:function(opts){
+        opts=opts||{};
+        var len=opts.len||16;
+        var mode=opts.mode||'secure';
+        var rndIntFn=mode==='seeded'?rndInt:function(min,max){var range=max-min+1;var maxVal=Math.floor(0xFFFFFFFF/range)*range;var val;do{var a=new Uint32Array(1);crypto.getRandomValues(a);val=a[0]}while(val>=maxVal);return min+(val%range)};
+        var rndPickFn=mode==='seeded'?rndPick:function(arr){return arr[rndIntFn(0,arr.length-1)]};
+        
+        if(opts.policy==='passphrase'){
+            var words=[];for(var i=0;i<4;i++)words.push(rndPickFn(DICT.passWords));
+            return words.join(opts.loginSep||'-')+'-'+rndIntFn(10,99);
+        }
+        
+        var upper='ABCDEFGHJKLMNPQRSTUVWXYZ', lower='abcdefghjkmnpqrstuvwxyz', digit='23456789', special='!@#$%^&*';
+        if(!opts.noSimilar){upper='ABCDEFGHIJKLMNOPQRSTUVWXYZ';lower='abcdefghijklmnopqrstuvwxyz';digit='0123456789';special='!@#$%^&*()-_=+[]{}|;:,.<>?'}
+        
+        var pool='';
+        if(opts.upper)pool+=upper; if(opts.lower)pool+=lower; if(opts.digit)pool+=digit; if(opts.special)pool+=special;
+        if(!pool)pool=lower+digit;
+        
+        var pwd=[];
+        if(opts.upper&&upper.length)pwd.push(upper[rndIntFn(0,upper.length-1)]);
+        if(opts.lower&&lower.length)pwd.push(lower[rndIntFn(0,lower.length-1)]);
+        if(opts.digit&&digit.length)pwd.push(digit[rndIntFn(0,digit.length-1)]);
+        if(opts.special&&special.length)pwd.push(special[rndIntFn(0,special.length-1)]);
+        
+        while(pwd.length<len){
+            var ch=pool[rndIntFn(0,pool.length-1)];
+            if(opts.noRepeat&&pwd.length>0&&pwd[pwd.length-1]===ch)continue;
+            pwd.push(ch);
+        }
+        for(var i=pwd.length-1;i>0;i--){var j=rndIntFn(0,i);var t=pwd[i];pwd[i]=pwd[j];pwd[j]=t}
+        return pwd.join('');
+    },
+    transliterate:function(text){var m={'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'};return text.toLowerCase().split('').map(function(c){return m[c]||c}).join('').replace(/[^a-z.]/g,'')},
+    randomBirthDate:function(){var now=new Date();var from=new Date(now.getFullYear()-80,0,1);var to=new Date(now.getFullYear()-18,now.getMonth(),now.getDate());var t=from.getTime()+rnd()*(to.getTime()-from.getTime());var d=new Date(t);var dd=d.getDate()<10?'0'+d.getDate():''+d.getDate();var mm=(d.getMonth()+1)<10?'0'+(d.getMonth()+1):''+(d.getMonth()+1);return dd+'.'+mm+'.'+d.getFullYear()}
+};
+
+/* ============================================================
+ *  SECTION 6: COMPANY ENTITY
+ * ============================================================ */
+var Company={
+    generate:function(opts){
+        opts=opts||{};
+        var form=rndPick(DICT.legalForms);
+        var genders=['m','f','n','p'];
+        var gender=rndPick(genders);
+        var noun=rndPick(DICT.companyNounsByGender[gender]);
+        var adj=rndPick(DICT.companyAdjByGender[gender]);
+        var name=form+' «'+adj+' '+noun+'»';
+        var shortBase=noun.length>4?noun.substr(0,4):noun;
+        var shortName=form+' «'+shortBase+'»';
+        var emailName=this.transliterate(noun).toLowerCase().replace(/[^a-z]/g,'');
+        if(!emailName)emailName='company';
+        return{
+            legalForm:form,
+            name:name,
+            shortName:shortName,
+            inn:Gen.innul(opts.invalid),
+            kpp:Gen.kpp(),
+            ogrn:Gen.ogrn(opts.invalid),
+            email:'info@'+emailName+'.'+rndPick(DICT.emailDomains)
+        };
+    },
+    transliterate:function(text){
+        var m={'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'};
+        return text.toLowerCase().split('').map(function(c){return m[c]||c}).join('')
+    }
+};
+
+/* ============================================================
+ *  SECTION 6.5: ADDRESS ENTITY (Адреса РФ)
+ * ============================================================ */
+var Address={
+    generate:function(opts){
+        opts=opts||{};
+        var region=rndPick(DICT.regions);
+        var city=region.city;
+        var streetType, streetName, street;
+
+        if(DICT.citySpecificStreets[city] && rnd() < 0.6){
+            streetName = rndPick(DICT.citySpecificStreets[city]);
+            if(streetName.includes('проспект') || streetName.includes('шоссе') || streetName.includes('бульвар')){
+                street = streetName;
+                var m = streetName.match(/^(.+?)\s+(проспект|шоссе|бульвар)$/);
+                if(m){ streetName = m[1]; streetType = m[2]; }
+                else { streetType = ''; }
+            } else {
+                street = 'ул. ' + streetName;
+                streetType = 'ул.';
+            }
+        } else {
+            var genders = ['m', 'f', 'n', 'inv'];
+            var gender = rndPick(genders);
+            streetType = rndPick(DICT.streetTypesByGender[gender]);
+            streetName = rndPick(DICT.streetNamesByGender[gender]);
+            street = streetType + ' ' + streetName;
+        }
+
+        var houseNum=rndInt(1,200);
+        var house=''+houseNum;
+        var houseType=rnd();
+        if(houseType<0.15)house+=' к.'+rndInt(1,10);
+        else if(houseType<0.25)house+=' стр.'+rndInt(1,5);
+        else if(houseType<0.30)house+='/'+rndInt(1,20);
+        var flat=rndInt(0,500);
+        var zipBase=region.zip;
+        var zip=zipBase;
+        while(zip.length<6)zip+=rndInt(0,9);
+        var full=zip+', '+region.name+', '+city+', '+street+', д. '+house+(flat>0?', кв. '+flat:', оф. '+rndInt(1,200));
+        return{
+            zip:zip,region:region.name,regionCode:region.code,
+            city:city,street:street,streetType:streetType,streetName:streetName,
+            house:house,flat:flat,full:full
+        };
+    },
+    generateInvalid:function(type){
+        var a=this.generate({});
+        switch(type){
+            case 'no_house':return a.zip+', '+a.city+', '+a.street;
+            case 'no_flat':return a.zip+', '+a.city+', '+a.street+', д. '+a.house;
+            case 'no_street':return a.zip+', '+a.city;
+            case 'only_city':return a.city;
+            case 'empty':return'';
+            case 'latin':return'123456, Moscow, Lenina st., 10, apt. 5';
+            case 'special_chars':return a.zip+', '+a.city+', '+a.street+' <script>';
+            case 'too_long':return a.full+' '+a.full+' '+a.full;
+            case 'wrong_zip_short':return'123, '+a.city+', '+a.street+', д. '+a.house;
+            case 'wrong_zip_long':return'1234567, '+a.city+', '+a.street+', д. '+a.house;
+            case 'negative_house':return a.zip+', '+a.city+', '+a.street+', д. -5';
+            case 'zero_house':return a.zip+', '+a.city+', '+a.street+', д. 0';
+            case 'letters_in_house':return a.zip+', '+a.city+', '+a.street+', д. 10а';
+            case 'spaces_only':return'   ';
+            default:return a.full;
+        }
+    },
+    validate:function(addr){
+        if(!addr||typeof addr!=='string')return{valid:false,reason:'Пустое значение'};
+        addr=addr.trim();
+        if(!addr)return{valid:false,reason:'Пустая строка'};
+        if(addr.length<10)return{valid:false,reason:'Слишком короткий'};
+        if(addr.length>500)return{valid:false,reason:'Слишком длинный'};
+        var zipMatch=addr.match(/^(\d{6})/);
+        if(!zipMatch)return{valid:false,reason:'Нет индекса или неверный формат'};
+        var hasCity=/г\.|пос\.|д\.|с\.|р\.п\.|п\.г\.т\./i.test(addr);
+        var hasStreet=/ул\.|пр-кт|пер\.|бул\.|ш\.|пр\.|наб\.|пр-д|аллея|тракт|мкр\.|проспект|шоссе|бульвар/i.test(addr);
+        var hasHouse=/д\.?\s*\d+/i.test(addr);
+        if(!hasCity)return{valid:false,reason:'Нет населённого пункта'};
+        if(!hasStreet)return{valid:false,reason:'Нет улицы'};
+        if(!hasHouse)return{valid:false,reason:'Нет номера дома'};
+        return{valid:true,reason:'Формат корректный'};
+    }
+};
+
+/* ============================================================
+ *  SECTION 6.6: BANK ENTITY (Банковские реквизиты РФ)
+ * ============================================================ */
+var Bank={
+    generate:function(opts){
+        opts=opts||{};
+        var useRealBic=opts.useRealBic===true;
+        var bic,bankName,corrAccount;
+        if(useRealBic){
+            var bank=rndPick(DICT.banks);
+            bic=bank.bic;bankName=bank.name;corrAccount=bank.corrAccount;
+        }else{
+            bic=this.generateBic();
+            bankName=this.generateBankName();
+            corrAccount=this.generateCorrAccount(bic);
+        }
+        var accountTypeKey=opts.accountType||'legal';
+        var currencyKey=opts.currency||'RUB';
+        var account=this.generateAccount({
+            type:DICT.accountTypes[accountTypeKey]||DICT.accountTypes.legal,
+            currency:DICT.currencies[currencyKey]||DICT.currencies.RUB,
+            bic:bic
+        });
+        var swift=this.generateSwift(bankName);
+        return{
+            bic:bic,bankName:bankName,corrAccount:corrAccount,
+            account:account,accountType:accountTypeKey,currency:currencyKey,swift:swift
+        };
+    },
+    generateBic:function(){
+        var bic='04';
+        bic+=rndInt(1,99).toString().padStart(2,'0');
+        bic+=rndInt(1,99).toString().padStart(2,'0');
+        bic+=rndInt(50,999).toString().padStart(3,'0');
+        return bic;
+    },
+    generateBankName:function(){
+        var prefixes=['ПАО','АО','ООО','КБ'];
+        var words=['Вектор','Северный','Центральный','Глобальный','Национальный','Промышленный','Технологический','Инвестиционный','Региональный','Столичный'];
+        var suffixes=['Банк','Кредит','Финанс','Капитал','Инвест','Траст','Стандарт'];
+        return rndPick(prefixes)+' «'+rndPick(words)+' '+rndPick(suffixes)+'»';
+    },
+    generateCorrAccount:function(bic){
+        var acc='301';
+        acc+=rndInt(10,99).toString();
+        acc+=rndInt(100,999).toString();
+        acc+=rndInt(100000000,999999999).toString();
+        acc+=bic.substr(6,3);
+        return acc;
+    },
+    generateAccount:function(opts){
+        opts=opts||{};
+        var type=opts.type||'40702';
+        var currency=opts.currency||'643';
+        var bic=opts.bic||'044525225';
+        
+        var base=type+currency;
+        base+='00';
+        base+=rndInt(100,999).toString();
+        base+=rndInt(1000000,9999999).toString();
+        
+        var checksum=this.calculateAccountChecksum(base,bic);
+        base=base.substr(0,8)+checksum.toString().padStart(2,'0')+base.substr(10);
+        return base;
+    },
+    calculateAccountChecksum:function(account,bic){
+        var zeroed=account.substr(0,8)+'00'+account.substr(10);
+        var checkString=bic+zeroed;
+        var weights=[7,1,3];
+        var sum=0;
+        for(var i=0;i<checkString.length;i++){
+            var d=parseInt(checkString[i],10);
+            if(isNaN(d))d=0;
+            sum+=d*weights[i%3];
+        }
+        return sum%10;
+    },
+    generateSwift:function(bankName){
+        if(!bankName)bankName='BANK';
+        var clean=String(bankName).replace(/[^а-яА-Яa-zA-Z]/g,'');
+        var bankCode='';
+        
+        var translit={'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'};
+        
+        for(var i=0;i<clean.length&&bankCode.length<4;i++){
+            var ch=clean[i].toLowerCase();
+            var tr=translit[ch]||ch;
+            if(tr&&tr.length>0)bankCode+=tr[0];
+        }
+        
+        bankCode=bankCode.toUpperCase();
+        if(bankCode.length<4)bankCode=(bankCode+'BANK').substr(0,4);
+        
+        var country='RU';
+        var location=rndPick(['MM','MX','5M','SM','PM','RM','TM']);
+        var branch=rnd()<0.5?'':'XXX';
+        
+        return bankCode+country+location+branch;
+    },
+    transliterateSwift:function(text){
+        var m={'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ж':'Z','З':'Z','И':'I','Й':'Y',
+            'К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R','С':'S','Т':'T','У':'U',
+            'Ф':'F','Х':'H','Ц':'T','Ч':'C','Ш':'S','Щ':'S','Э':'E','Ю':'Y','Я':'Y'};
+        var result='';
+        for(var i=0;i<text.length;i++){
+            var ch=text[i];
+            result+=m[ch]||ch;
+        }
+        return result.replace(/[^A-Z]/g,'').substr(0,4);
+    },
+    validateBic:function(bic){
+        if(!bic)return{valid:false,reason:'Пустое значение'};
+        bic=bic.toString().trim();
+        if(!/^\d{9}$/.test(bic))return{valid:false,reason:'Должно быть 9 цифр'};
+        if(bic.substr(0,2)!=='04')return{valid:false,reason:'Должно начинаться с 04'};
+        return{valid:true,reason:'БИК корректен'};
+    },
+    validateAccount:function(account,bic){
+        if(!account)return{valid:false,reason:'Пустое значение'};
+        account=account.toString().trim();
+        if(!/^\d{20}$/.test(account))return{valid:false,reason:'Должно быть 20 цифр'};
+        var validTypes=['407','408','401','421','423','424','425','426','430','440','441','442','450','455','460','461','462','463','464','465','470','471','472','473','474','475','476','477','478','479','480','481','482','301'];
+        var type3=account.substr(0,3);
+        var typeOk=validTypes.some(function(t){return type3.indexOf(t)===0});
+        if(!typeOk)return{valid:false,reason:'Неверный тип счёта: '+type3};
+        if(bic){
+            var expected=this.calculateAccountChecksum(account,bic);
+            var actual=parseInt(account.substr(8,2),10);
+            if(expected!==actual)return{valid:false,reason:'Неверная контрольная сумма (ожидалось '+expected+', получено '+actual+')'};
+        }
+        return{valid:true,reason:'Счёт корректен'};
+    },
+    validateCorrAccount:function(corrAccount,bic){
+        if(!corrAccount)return{valid:false,reason:'Пустое значение'};
+        corrAccount=corrAccount.toString().trim();
+        if(!/^\d{20}$/.test(corrAccount))return{valid:false,reason:'Должно быть 20 цифр'};
+        if(corrAccount.substr(0,3)!=='301')return{valid:false,reason:'Должно начинаться с 301'};
+        if(bic){
+            var bicPart=bic.substr(6,3);
+            var corrPart=corrAccount.substr(17,3);
+            if(bicPart!==corrPart)return{valid:false,reason:'Несовпадение с БИК (последние 3 цифры к/с: '+corrPart+', БИК: '+bicPart+')'};
+        }
+        return{valid:true,reason:'Корр. счёт корректен'};
+    }
+};
+
+/* ============================================================
+ *  SECTION 7: VALIDATORS
+ * ============================================================ */
+var Val={
+    innul:function(inn){if(!/^\d{10}$/.test(inn))return false;var w=[2,4,10,3,5,9,4,6,8];var s=0;for(var i=0;i<9;i++)s+=parseInt(inn[i])*w[i];return((s%11)%10)===parseInt(inn[9])},
+    innfl:function(inn){if(!/^\d{12}$/.test(inn))return false;var w11=[7,2,4,10,3,5,9,4,6,8];var w12=[3,7,2,4,10,3,5,9,4,6,8];var s11=0,s12=0;for(var i=0;i<10;i++){s11+=parseInt(inn[i])*w11[i];s12+=parseInt(inn[i])*w12[i]}var n11=(s11%11)%10;s12+=n11*8;var n12=(s12%11)%10;return n11===parseInt(inn[10])&&n12===parseInt(inn[11])},
+    snils:function(snils){var c=snils.replace(/\D/g,'');if(c.length!==11)return false;var n=c.substr(0,9);var k=parseInt(c.substr(9),10);var s=0;for(var i=0;i<9;i++)s+=parseInt(n[i])*(9-i);var ck=0;if(s<100)ck=s;else if(s===100||s===101)ck=0;else{ck=s%101;if(ck===100)ck=0}return ck===k},
+    ogrn:function(ogrn){if(!/^\d{13}$/.test(ogrn))return false;var r=(parseInt(ogrn.substr(0,12),10)%11)%10;return r===parseInt(ogrn[12],10)},
+    address:function(addr){return Address.validate(addr).valid},
+    bic:function(bic){return Bank.validateBic(bic).valid},
+    account:function(acc){return Bank.validateAccount(acc).valid},
+    corrAccount:function(ca){return Bank.validateCorrAccount(ca).valid}
+};
+
+/* ============================================================
+ *  SECTION 8: SCHEMA DEFINITIONS
+ * ============================================================ */
+var PERSON_FIELDS=[
+    {id:'fullName',label:'ФИО (полное)',generator:'person.fullName',exportName:'full_name'},
+    {id:'gender',label:'Пол',generator:'person.gender',exportName:'gender'},
+    {id:'birthDate',label:'Дата рождения',generator:'person.birthDate',exportName:'birth_date'},
+    {id:'login',label:'Login',generator:'person.login',exportName:'login'},
+    {id:'password',label:'Password',generator:'person.password',exportName:'password'},
+    {id:'inn',label:'ИНН ФЛ',generator:'person.inn',exportName:'inn'},
+    {id:'snils',label:'СНИЛС',generator:'person.snils',exportName:'snils'},
+    {id:'passport',label:'Паспорт',generator:'person.passport',exportName:'passport'},
+    {id:'phone',label:'Телефон',generator:'person.phone',exportName:'phone'},
+    {id:'email',label:'Email',generator:'person.email',exportName:'email'},
+    {id:'address.full',label:'Адрес (полный)',generator:'address.full',exportName:'address'},
+    {id:'address.zip',label:'Индекс',generator:'address.zip',exportName:'zip'},
+    {id:'address.region',label:'Регион',generator:'address.region',exportName:'region'},
+    {id:'address.city',label:'Город',generator:'address.city',exportName:'city'},
+    {id:'address.street',label:'Улица',generator:'address.street',exportName:'street'},
+    {id:'address.house',label:'Дом',generator:'address.house',exportName:'house'},
+    {id:'address.flat',label:'Квартира',generator:'address.flat',exportName:'flat'},
+    {id:'bank.bic',label:'БИК',generator:'bank.bic',exportName:'bic'},
+    {id:'bank.bankName',label:'Наименование банка',generator:'bank.bankName',exportName:'bank_name'},
+    {id:'bank.corrAccount',label:'Корр. счёт',generator:'bank.corrAccount',exportName:'corr_account'},
+    {id:'bank.account',label:'Расчётный счёт',generator:'bank.account',exportName:'account'},
+    {id:'bank.swift',label:'SWIFT',generator:'bank.swift',exportName:'swift'},
+    {id:'customPattern',label:'Custom Pattern',generator:'customPattern',exportName:'custom_field'}
+];
+var COMPANY_FIELDS=[
+    {id:'legalForm',label:'ОПФ',generator:'company.legalForm',exportName:'legal_form'},
+    {id:'name',label:'Название',generator:'company.name',exportName:'name'},
+    {id:'shortName',label:'Краткое название',generator:'company.shortName',exportName:'short_name'},
+    {id:'inn',label:'ИНН ЮЛ',generator:'company.inn',exportName:'inn'},
+    {id:'kpp',label:'КПП',generator:'company.kpp',exportName:'kpp'},
+    {id:'ogrn',label:'ОГРН',generator:'company.ogrn',exportName:'ogrn'},
+    {id:'email',label:'Email',generator:'company.email',exportName:'email'},
+    {id:'address.full',label:'Адрес (полный)',generator:'address.full',exportName:'address'},
+    {id:'address.zip',label:'Индекс',generator:'address.zip',exportName:'zip'},
+    {id:'address.region',label:'Регион',generator:'address.region',exportName:'region'},
+    {id:'address.city',label:'Город',generator:'address.city',exportName:'city'},
+    {id:'address.street',label:'Улица',generator:'address.street',exportName:'street'},
+    {id:'address.house',label:'Дом',generator:'address.house',exportName:'house'},
+    {id:'address.flat',label:'Квартира',generator:'address.flat',exportName:'flat'},
+    {id:'bank.bic',label:'БИК',generator:'bank.bic',exportName:'bic'},
+    {id:'bank.bankName',label:'Наименование банка',generator:'bank.bankName',exportName:'bank_name'},
+    {id:'bank.corrAccount',label:'Корр. счёт',generator:'bank.corrAccount',exportName:'corr_account'},
+    {id:'bank.account',label:'Расчётный счёт',generator:'bank.account',exportName:'account'},
+    {id:'bank.swift',label:'SWIFT',generator:'bank.swift',exportName:'swift'},
+    {id:'customPattern',label:'Custom Pattern',generator:'customPattern',exportName:'custom_field'}
+];
+var COMMON_FIELDS=[
+    {id:'uuid',label:'UUID',generator:'uuid',exportName:'id'}
+];
+
+var DEFAULT_PERSON_SCHEMA={
+    entityType:'person',
+    fields:[
+        {id:'fullName',label:'ФИО (полное)',generator:'person.fullName',enabled:true,exportName:'full_name',nullable:0,empty:0},
+        {id:'gender',label:'Пол',generator:'person.gender',enabled:false,exportName:'gender',nullable:0,empty:0},
+        {id:'birthDate',label:'Дата рождения',generator:'person.birthDate',enabled:false,exportName:'birth_date',nullable:0,empty:0},
+        {id:'login',label:'Login',generator:'person.login',enabled:true,exportName:'login',nullable:0,empty:0},
+        {id:'password',label:'Password',generator:'person.password',enabled:true,exportName:'password',nullable:0,empty:0},
+        {id:'inn',label:'ИНН ФЛ',generator:'person.inn',enabled:true,exportName:'inn',nullable:0,empty:0},
+        {id:'snils',label:'СНИЛС',generator:'person.snils',enabled:true,exportName:'snils',nullable:0,empty:0},
+        {id:'passport',label:'Паспорт',generator:'person.passport',enabled:true,exportName:'passport',nullable:0,empty:0},
+        {id:'phone',label:'Телефон',generator:'person.phone',enabled:true,exportName:'phone',nullable:0,empty:0},
+        {id:'email',label:'Email',generator:'person.email',enabled:true,exportName:'email',nullable:0,empty:0},
+        {id:'address.full',label:'Адрес (полный)',generator:'address.full',enabled:true,exportName:'address',nullable:0,empty:0},
+        {id:'address.zip',label:'Индекс',generator:'address.zip',enabled:false,exportName:'zip',nullable:0,empty:0},
+        {id:'address.region',label:'Регион',generator:'address.region',enabled:false,exportName:'region',nullable:0,empty:0},
+        {id:'address.city',label:'Город',generator:'address.city',enabled:true,exportName:'city',nullable:0,empty:0},
+        {id:'address.street',label:'Улица',generator:'address.street',enabled:false,exportName:'street',nullable:0,empty:0},
+        {id:'address.house',label:'Дом',generator:'address.house',enabled:false,exportName:'house',nullable:0,empty:0},
+        {id:'address.flat',label:'Квартира',generator:'address.flat',enabled:false,exportName:'flat',nullable:0,empty:0},
+        {id:'bank.bic',label:'БИК',generator:'bank.bic',enabled:false,exportName:'bic',nullable:0,empty:0},
+        {id:'bank.bankName',label:'Наименование банка',generator:'bank.bankName',enabled:false,exportName:'bank_name',nullable:0,empty:0},
+        {id:'bank.corrAccount',label:'Корр. счёт',generator:'bank.corrAccount',enabled:false,exportName:'corr_account',nullable:0,empty:0},
+        {id:'bank.account',label:'Расчётный счёт',generator:'bank.account',enabled:false,exportName:'account',nullable:0,empty:0},
+        {id:'bank.swift',label:'SWIFT',generator:'bank.swift',enabled:false,exportName:'swift',nullable:0,empty:0},
+        {id:'customPattern',label:'Custom Pattern',generator:'customPattern',enabled:false,exportName:'custom_field',nullable:0,empty:0},
+        {id:'uuid',label:'UUID',generator:'uuid',enabled:false,exportName:'id',nullable:0,empty:0}
+    ]
+};
+var DEFAULT_COMPANY_SCHEMA={
+    entityType:'company',
+    fields:[
+        {id:'legalForm',label:'ОПФ',generator:'company.legalForm',enabled:true,exportName:'legal_form',nullable:0,empty:0},
+        {id:'name',label:'Название',generator:'company.name',enabled:true,exportName:'name',nullable:0,empty:0},
+        {id:'shortName',label:'Краткое название',generator:'company.shortName',enabled:false,exportName:'short_name',nullable:0,empty:0},
+        {id:'inn',label:'ИНН ЮЛ',generator:'company.inn',enabled:true,exportName:'inn',nullable:0,empty:0},
+        {id:'kpp',label:'КПП',generator:'company.kpp',enabled:true,exportName:'kpp',nullable:0,empty:0},
+        {id:'ogrn',label:'ОГРН',generator:'company.ogrn',enabled:true,exportName:'ogrn',nullable:0,empty:0},
+        {id:'email',label:'Email',generator:'company.email',enabled:true,exportName:'email',nullable:0,empty:0},
+        {id:'address.full',label:'Адрес (полный)',generator:'address.full',enabled:true,exportName:'address',nullable:0,empty:0},
+        {id:'address.zip',label:'Индекс',generator:'address.zip',enabled:false,exportName:'zip',nullable:0,empty:0},
+        {id:'address.region',label:'Регион',generator:'address.region',enabled:false,exportName:'region',nullable:0,empty:0},
+        {id:'address.city',label:'Город',generator:'address.city',enabled:true,exportName:'city',nullable:0,empty:0},
+        {id:'address.street',label:'Улица',generator:'address.street',enabled:false,exportName:'street',nullable:0,empty:0},
+        {id:'address.house',label:'Дом',generator:'address.house',enabled:false,exportName:'house',nullable:0,empty:0},
+        {id:'address.flat',label:'Квартира',generator:'address.flat',enabled:false,exportName:'flat',nullable:0,empty:0},
+        {id:'bank.bic',label:'БИК',generator:'bank.bic',enabled:false,exportName:'bic',nullable:0,empty:0},
+        {id:'bank.bankName',label:'Наименование банка',generator:'bank.bankName',enabled:false,exportName:'bank_name',nullable:0,empty:0},
+        {id:'bank.corrAccount',label:'Корр. счёт',generator:'bank.corrAccount',enabled:false,exportName:'corr_account',nullable:0,empty:0},
+        {id:'bank.account',label:'Расчётный счёт',generator:'bank.account',enabled:false,exportName:'account',nullable:0,empty:0},
+        {id:'bank.swift',label:'SWIFT',generator:'bank.swift',enabled:false,exportName:'swift',nullable:0,empty:0},
+        {id:'customPattern',label:'Custom Pattern',generator:'customPattern',enabled:false,exportName:'custom_field',nullable:0,empty:0},
+        {id:'uuid',label:'UUID',generator:'uuid',enabled:false,exportName:'id',nullable:0,empty:0}
+    ]
+};
+
+var currentSchema=JSON.parse(JSON.stringify(DEFAULT_PERSON_SCHEMA));
+var currentPresetName='__person_default__';
+
+/* ============================================================
+ *  SECTION 9: SCHEMA BUILDER UI
+ * ============================================================ */
+function switchEntityType(type){
+    if(type==='person'){
+        currentSchema=JSON.parse(JSON.stringify(DEFAULT_PERSON_SCHEMA));
+        currentPresetName='__person_default__';
+    }else if(type==='company'){
+        currentSchema=JSON.parse(JSON.stringify(DEFAULT_COMPANY_SCHEMA));
+        currentPresetName='__company_default__';
+    }else{
+        currentSchema={entityType:'mixed',fields:[]};
+        PERSON_FIELDS.forEach(function(f){
+            var enabled=(f.id==='fullName'||f.id==='inn'||f.id==='phone'||f.id==='address.full'||f.id==='address.city');
+            currentSchema.fields.push({id:'p_'+f.id,label:'[ФЛ] '+f.label,generator:f.generator,enabled:enabled,exportName:'person_'+f.exportName,nullable:0,empty:0});
+        });
+        COMPANY_FIELDS.forEach(function(f){
+            var enabled=(f.id==='name'||f.id==='inn'||f.id==='address.full'||f.id==='address.city');
+            currentSchema.fields.push({id:'c_'+f.id,label:'[ЮЛ] '+f.label,generator:f.generator,enabled:enabled,exportName:'company_'+f.exportName,nullable:0,empty:0});
+        });
+        [
+            {id:'bank.bic',label:'БИК',exportName:'bank_bic'},
+            {id:'bank.bankName',label:'Наименование банка',exportName:'bank_name'},
+            {id:'bank.corrAccount',label:'Корр. счёт',exportName:'bank_corr_account'},
+            {id:'bank.account',label:'Расчётный счёт',exportName:'bank_account'},
+            {id:'bank.swift',label:'SWIFT',exportName:'bank_swift'}
+        ].forEach(function(f){
+            currentSchema.fields.push({id:'b_'+f.id,label:'[Банк] '+f.label,generator:f.id,enabled:false,exportName:f.exportName,nullable:0,empty:0});
+        });
+        COMMON_FIELDS.forEach(function(f){
+            currentSchema.fields.push({id:'x_'+f.id,label:'[Общее] '+f.label,generator:f.generator,enabled:false,exportName:f.exportName,nullable:0,empty:0});
+        });
+        currentPresetName='__mixed_default__';
+    }
+    var tabs=document.querySelectorAll('.entity-tab');
+    for(var i=0;i<tabs.length;i++){
+        tabs[i].classList.toggle('active',tabs[i].getAttribute('data-entity')===type);
+    }
+    renderSchema();
+    renderPresets();
+    showToast('Тип сущности: '+(type==='person'?'Физлицо':type==='company'?'Юрлицо':'Смешанный'));
+}
+
+function renderSchema(){
+    var list=document.getElementById('schema-list');
+    var hasPasswordField=currentSchema.fields.some(function(f){return f.generator==='person.password'&&f.enabled});
+    var passSettings=document.getElementById('password-schema-settings');
+    if(passSettings)passSettings.style.display=hasPasswordField?'block':'none';
+    var html='';
+    for(var i=0;i<currentSchema.fields.length;i++){
+        var f=currentSchema.fields[i];
+        html+='<div class="schema-row'+(f.enabled?'':' disabled')+'" draggable="true" data-idx="'+i+'">'+
+            '<span class="drag-handle" title="Перетащите для изменения порядка">⠿</span>'+
+            '<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="toggleSchemaField('+i+')" title="Включить поле">'+
+            '<span class="field-label" title="Генератор: '+escapeHtml(f.generator)+'">'+escapeHtml(f.label)+'</span>'+
+            '<input type="text" value="'+escapeHtml(f.exportName)+'" placeholder="export_name" onchange="updateExportName('+i+',this.value)" title="Имя поля в экспорте">'+
+            '<input type="number" value="'+f.nullable+'" min="0" max="100" onchange="updateNullable('+i+',this.value)" title="NULL %">'+
+            (f.generator==='customPattern'?'<input type="text" value="'+escapeHtml(f.customTemplate||'EMP-{{date}}-{{digits:6}}')+'" placeholder="Шаблон" onchange="updateCustomTemplate('+i+',this.value)" title="Токены: {{uuid}}, {{inn_fl}}, {{first_name}}, {{date}}, {{digits:6}}, A=буква, 9=цифра" style="grid-column:1/-1;background:var(--surface);border:1px dashed var(--primary);font-family:monospace">':'')+
+            '<input type="number" value="'+f.empty+'" min="0" max="100" onchange="updateEmpty('+i+',this.value)" title="Вероятность пустой строки (%)">'+
+            '</div>';
+    }
+    list.innerHTML=html;
+    initDragAndDrop();
+}
+
+function initDragAndDrop(){
+    var rows=document.querySelectorAll('.schema-row[draggable]');
+    var dragSrcIdx=null;
+    var placeholder=null;
+
+    for(var i=0;i<rows.length;i++){
+        (function(row){
+            var idx=parseInt(row.getAttribute('data-idx'),10);
+
+            row.addEventListener('dragstart',function(e){
+                dragSrcIdx=idx;
+                row.classList.add('dragging');
+                e.dataTransfer.effectAllowed='move';
+                e.dataTransfer.setData('text/plain',''+idx);
+                placeholder=document.createElement('div');
+                placeholder.className='drag-placeholder';
+                setTimeout(function(){row.style.display='none'},0);
+            });
+
+            row.addEventListener('dragend',function(e){
+                row.classList.remove('dragging');
+                row.style.display='';
+                var allRows=document.querySelectorAll('.schema-row');
+                for(var j=0;j<allRows.length;j++){
+                    allRows[j].classList.remove('drag-over','drag-over-above','drag-over-below');
+                }
+                if(placeholder&&placeholder.parentNode){
+                    placeholder.parentNode.removeChild(placeholder);
+                }
+                dragSrcIdx=null;
+            });
+
+            row.addEventListener('dragover',function(e){
+                e.preventDefault();
+                e.dataTransfer.dropEffect='move';
+                if(dragSrcIdx===null||dragSrcIdx===idx)return;
+                var rect=row.getBoundingClientRect();
+                var midY=rect.top+rect.height/2;
+                var isAbove=e.clientY<midY;
+                var allRows=document.querySelectorAll('.schema-row');
+                for(var j=0;j<allRows.length;j++){
+                    allRows[j].classList.remove('drag-over','drag-over-above','drag-over-below');
+                }
+                row.classList.add('drag-over');
+                row.classList.add(isAbove?'drag-over-above':'drag-over-below');
+                if(placeholder){
+                    if(isAbove){
+                        row.parentNode.insertBefore(placeholder,row);
+                    }else{
+                        row.parentNode.insertBefore(placeholder,row.nextSibling);
+                    }
+                }
+            });
+
+            row.addEventListener('dragleave',function(e){
+                row.classList.remove('drag-over','drag-over-above','drag-over-below');
+            });
+
+            row.addEventListener('drop',function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                if(dragSrcIdx===null||dragSrcIdx===idx)return;
+                var rect=row.getBoundingClientRect();
+                var midY=rect.top+rect.height/2;
+                var isAbove=e.clientY<midY;
+                var targetIdx=idx;
+                if(!isAbove)targetIdx++;
+                var item=currentSchema.fields.splice(dragSrcIdx,1)[0];
+                var insertAt=targetIdx;
+                if(dragSrcIdx<targetIdx)insertAt--;
+                if(insertAt<0)insertAt=0;
+                if(insertAt>currentSchema.fields.length)insertAt=currentSchema.fields.length;
+                currentSchema.fields.splice(insertAt,0,item);
+                renderSchema();
+                showToast('Порядок полей изменён');
+            });
+
+            var touchStartY=0;
+            var touchClone=null;
+            var touchActive=false;
+            var handle=row.querySelector('.drag-handle');
+
+            handle.addEventListener('pointerdown',function(e){
+                if(e.pointerType==='mouse')return;
+                e.preventDefault();
+                touchActive=true;
+                touchStartY=e.clientY;
+                dragSrcIdx=idx;
+                row.classList.add('dragging');
+                try{handle.setPointerCapture(e.pointerId)}catch(err){}
+                touchClone=row.cloneNode(true);
+                touchClone.style.position='fixed';
+                touchClone.style.left=row.getBoundingClientRect().left+'px';
+                touchClone.style.top=row.getBoundingClientRect().top+'px';
+                touchClone.style.width=row.getBoundingClientRect().width+'px';
+                touchClone.style.zIndex='9999';
+                touchClone.style.opacity='0.8';
+                touchClone.style.pointerEvents='none';
+                touchClone.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)';
+                document.body.appendChild(touchClone);
+            });
+
+            handle.addEventListener('pointermove',function(e){
+                if(!touchActive||!touchClone)return;
+                e.preventDefault();
+                touchClone.style.top=(e.clientY-20)+'px';
+                var allRows=document.querySelectorAll('.schema-row');
+                for(var j=0;j<allRows.length;j++){
+                    allRows[j].classList.remove('drag-over','drag-over-above','drag-over-below');
+                    var rect=allRows[j].getBoundingClientRect();
+                    if(e.clientY>=rect.top&&e.clientY<=rect.bottom){
+                        var midY=rect.top+rect.height/2;
+                        allRows[j].classList.add('drag-over');
+                        allRows[j].classList.add(e.clientY<midY?'drag-over-above':'drag-over-below');
+                    }
+                }
+            });
+
+            handle.addEventListener('pointerup',function(e){
+                if(!touchActive)return;
+                touchActive=false;
+                row.classList.remove('dragging');
+                if(touchClone&&touchClone.parentNode){
+                    touchClone.parentNode.removeChild(touchClone);
+                    touchClone=null;
+                }
+                var allRows=document.querySelectorAll('.schema-row');
+                var targetIdx=idx;
+                for(var j=0;j<allRows.length;j++){
+                    var rect=allRows[j].getBoundingClientRect();
+                    if(e.clientY>=rect.top&&e.clientY<=rect.bottom){
+                        var jIdx=parseInt(allRows[j].getAttribute('data-idx'),10);
+                        var midY=rect.top+rect.height/2;
+                        targetIdx=e.clientY<midY?jIdx:jIdx+1;
+                        break;
+                    }
+                }
+                for(var j=0;j<allRows.length;j++){
+                    allRows[j].classList.remove('drag-over','drag-over-above','drag-over-below');
+                }
+                if(dragSrcIdx!==null&&dragSrcIdx!==targetIdx){
+                    var item=currentSchema.fields.splice(dragSrcIdx,1)[0];
+                    var insertAt=targetIdx;
+                    if(dragSrcIdx<targetIdx)insertAt--;
+                    if(insertAt<0)insertAt=0;
+                    if(insertAt>currentSchema.fields.length)insertAt=currentSchema.fields.length;
+                    currentSchema.fields.splice(insertAt,0,item);
+                    renderSchema();
+                    showToast('Порядок полей изменён');
+                }
+                dragSrcIdx=null;
+            });
+
+        })(rows[i]);
+    }
+}
+
+function toggleSchemaField(i){
+    currentSchema.fields[i].enabled=!currentSchema.fields[i].enabled;
+    renderSchema();
+}
+function updateExportName(i,v){currentSchema.fields[i].exportName=v.replace(/[^a-zA-Z0-9_]/g,'')||currentSchema.fields[i].id}
+function updateNullable(i,v){var n=parseInt(v,10);if(isNaN(n)||n<0)n=0;if(n>100)n=100;currentSchema.fields[i].nullable=n}
+function updateEmpty(i,v){var n=parseInt(v,10);if(isNaN(n)||n<0)n=0;if(n>100)n=100;currentSchema.fields[i].empty=n}
+function updateCustomTemplate(i,v){
+    currentSchema.fields[i].customTemplate=v;
+}
+
+/* ============================================================
+ *  SECTION 10: PRESETS
+ * ============================================================ */
+function loadPresets(){try{return JSON.parse(localStorage.getItem('qa_presets_v2')||'{}')}catch(e){return{}}}
+function savePresets(p){try{localStorage.setItem('qa_presets_v2',JSON.stringify(p))}catch(e){}}
+
+function renderPresets(){
+    var c=document.getElementById('presets-container');
+    var p=loadPresets();
+    var entityType=currentSchema.entityType;
+    var defaultName='__'+entityType+'_default__';
+    var keys=Object.keys(p).filter(function(k){return p[k].entityType===entityType});
+    var html='<div class="preset-chip'+(currentPresetName===defaultName?' active':'')+'" onclick="applyPresetByName(\''+defaultName+'\')">'+(entityType==='person'?'Стандарт ФЛ':entityType==='company'?'Стандарт ЮЛ':'Стандарт Смеш.')+'</div>';
+    for(var i=0;i<keys.length;i++){
+        html+='<div class="preset-chip'+(currentPresetName===keys[i]?' active':'')+'" onclick="applyPresetByName(\''+escapeHtml(keys[i]).replace(/'/g,'\\\'')+'\')">'+escapeHtml(keys[i])+'</div>';
+    }
+    c.innerHTML=html;
+    var delBtn=document.getElementById('delete-preset-btn');
+    if(currentPresetName.indexOf('__')===0&&currentPresetName.lastIndexOf('__')===currentPresetName.length-2){
+        delBtn.disabled=true;delBtn.style.opacity='.5';delBtn.title='Стандартный профиль нельзя удалить';
+    }else{
+        delBtn.disabled=false;delBtn.style.opacity='1';delBtn.title='';
+    }
+}
+
+function applyPresetByName(name){
+    var entityType=currentSchema.entityType;
+    if(name.indexOf('__')===0&&name.lastIndexOf('__')===name.length-2){
+        if(entityType==='person')currentSchema=JSON.parse(JSON.stringify(DEFAULT_PERSON_SCHEMA));
+        else if(entityType==='company')currentSchema=JSON.parse(JSON.stringify(DEFAULT_COMPANY_SCHEMA));
+        else{switchEntityType('mixed');return}
+    }else{
+        var p=loadPresets();
+        if(p[name]&&p[name].entityType===entityType){
+            currentSchema=JSON.parse(JSON.stringify(p[name]));
+        }
+    }
+    currentPresetName=name;
+    renderSchema();
+    renderPresets();
+    showToast('Профиль применён');
+}
+
+function savePreset(){
+    var input=document.getElementById('preset-name-input');
+    var name=input.value.trim();
+    if(!name){showToast('Введите имя профиля');input.focus();return}
+    if(name.indexOf('__')===0&&name.lastIndexOf('__')===name.length-2){showToast('Имя не может начинаться и заканчиваться на __');return}
+    var p=loadPresets();
+    p[name]=JSON.parse(JSON.stringify(currentSchema));
+    savePresets(p);
+    currentPresetName=name;
+    input.value='';
+    renderPresets();
+    showToast('Профиль "'+name+'" сохранён');
+}
+
+function deletePreset(){
+    if(currentPresetName.indexOf('__')===0&&currentPresetName.lastIndexOf('__')===currentPresetName.length-2){
+        showToast('Стандартный профиль нельзя удалить');return;
+    }
+    var p=loadPresets();
+    delete p[currentPresetName];
+    savePresets(p);
+    var entityType=currentSchema.entityType;
+    currentPresetName='__'+entityType+'_default__';
+    applyPresetByName(currentPresetName);
+    showToast('Профиль удалён');
+}
+
+/* ============================================================
+ *  SECTION 11: FIELD GENERATOR (с учётом nullable/empty)
+ * ============================================================ */
+function generateFieldValue(field,personData,companyData,addressData,bankData,opts){
+    if(field.empty>0&&rnd()*100<field.empty)return'';
+    // Custom Pattern
+    if(field.generator==='customPattern'){
+        var pattern=field.customTemplate||'EMP-{{date}}-{{digits:6}}';
+        return generatePattern(pattern);
+    }
+    if(field.nullable>0&&rnd()*100<field.nullable)return null;
+    var g=field.generator;var invalid=opts.invalid||false;
+    switch(g){
+        case 'person.fullName':return personData?personData.fullName:null;
+        case 'person.gender':return personData?(personData.gender==='male'?'Мужской':'Женский'):null;
+        case 'person.birthDate':return personData?personData.birthDate:null;
+        case 'person.login':return personData?personData.login:null;
+        case 'person.password':return personData?personData.password:null;
+        case 'person.inn':return personData?personData.inn:null;
+        case 'person.snils':return personData?personData.snils:null;
+        case 'person.passport':return personData?personData.passport:null;
+        case 'person.phone':return personData?personData.phone:null;
+        case 'person.email':return personData?personData.email:null;
+        case 'company.legalForm':return companyData?companyData.legalForm:null;
+        case 'company.name':return companyData?companyData.name:null;
+        case 'company.shortName':return companyData?companyData.shortName:null;
+        case 'company.inn':return companyData?companyData.inn:null;
+        case 'company.kpp':return companyData?companyData.kpp:null;
+        case 'company.ogrn':return companyData?companyData.ogrn:null;
+        case 'company.email':return companyData?companyData.email:null;
+        case 'address.full':return addressData?addressData.full:null;
+        case 'address.zip':return addressData?addressData.zip:null;
+        case 'address.region':return addressData?addressData.region:null;
+        case 'address.regionCode':return addressData?addressData.regionCode:null;
+        case 'address.city':return addressData?addressData.city:null;
+        case 'address.street':return addressData?addressData.street:null;
+        case 'address.streetType':return addressData?addressData.streetType:null;
+        case 'address.streetName':return addressData?addressData.streetName:null;
+        case 'address.house':return addressData?addressData.house:null;
+        case 'address.flat':return addressData?addressData.flat:null;
+        case 'bank.bic':return bankData?bankData.bic:null;
+        case 'bank.bankName':return bankData?bankData.bankName:null;
+        case 'bank.corrAccount':return bankData?bankData.corrAccount:null;
+        case 'bank.account':return bankData?bankData.account:null;
+        case 'bank.accountType':return bankData?bankData.accountType:null;
+        case 'bank.currency':return bankData?bankData.currency:null;
+        case 'bank.swift':return bankData?bankData.swift:null;
+        case 'uuid':return Gen.uuid();
+        case 'innul':return Gen.innul(invalid);
+        case 'innfl':return Gen.innfl(invalid);
+        case 'snils':return Gen.snils(invalid);
+        case 'ogrn':return Gen.ogrn(invalid);
+        case 'kpp':return Gen.kpp();
+        case 'passport':return Gen.passport();
+        case 'phone':return Gen.phone();
+        default:return'';
+    }
+}
+
+function generateRowBySchema(opts){
+    opts=opts||{};
+    var needPerson=false,needCompany=false,needAddress=false,needBank=false;
+    for(var i=0;i<currentSchema.fields.length;i++){
+        var f=currentSchema.fields[i];
+        if(!f.enabled)continue;
+        if(f.generator.indexOf('person.')===0)needPerson=true;
+        if(f.generator.indexOf('company.')===0)needCompany=true;
+        if(f.generator.indexOf('address.')===0)needAddress=true;
+        if(f.generator.indexOf('bank.')===0)needBank=true;
+    }
+    var person=needPerson?Person.generate({
+        invalid:opts.invalid,
+        loginStyle:'first.last',
+        len:parseInt(document.getElementById('schema-pass-len').value,10)||16,
+        mode:document.getElementById('schema-pass-mode').value||'seeded',
+        policy:document.getElementById('schema-pass-policy').value||'strong',
+        upper:document.getElementById('schema-pass-upper').checked,
+        lower:document.getElementById('schema-pass-lower').checked,
+        digit:document.getElementById('schema-pass-digit').checked,
+        special:document.getElementById('schema-pass-special').checked,
+        noSimilar:document.getElementById('schema-pass-no-similar').checked,
+        noRepeat:document.getElementById('schema-pass-no-repeat').checked
+    }):null;
+    var company=needCompany?Company.generate({invalid:opts.invalid}):null;
+    var address=needAddress?Address.generate({invalid:opts.invalid}):null;
+    var bank=needBank?Bank.generate({invalid:opts.invalid,useRealBic:false,accountType:'legal',currency:'RUB'}):null;
+    var row={};
+    for(var i=0;i<currentSchema.fields.length;i++){
+        var f=currentSchema.fields[i];
+        if(!f.enabled)continue;
+        row[f.exportName]=generateFieldValue(f,person,company,address,bank,opts);
+    }
+    return row;
+}
+
+/* ============================================================
+ *  SECTION 12: EXPORTERS
+ * ============================================================ */
+var Exporters={
+    json:function(rows){return JSON.stringify(rows,null,2)},
+    csv:function(rows){
+        if(!rows.length)return'';
+        var keys=Object.keys(rows[0]);
+        var out=keys.join(',')+'\n';
+        for(var i=0;i<rows.length;i++){
+            var vals=[];
+            for(var k=0;k<keys.length;k++){
+                var v=rows[i][keys[k]];
+                if(v===null||v===undefined)v='';
+                else v=String(v);
+                if(v.indexOf(',')>=0||v.indexOf('"')>=0||v.indexOf('\n')>=0||v.indexOf('\r')>=0){
+                    v='"'+v.replace(/"/g,'""')+'"';
+                }
+                vals.push(v);
+            }
+            out+=vals.join(',')+'\n';
+        }
+        return out;
+    },
+    sql:function(rows,table){
+        if(!rows.length)return'';
+        var keys=Object.keys(rows[0]);
+        var cols=keys.join(', ');
+        var out='';
+        for(var i=0;i<rows.length;i++){
+            var vals=[];
+            for(var k=0;k<keys.length;k++){
+                var v=rows[i][keys[k]];
+                if(v===null||v===undefined){vals.push('NULL')}
+                else if(v===''){vals.push("''")}
+                else{vals.push("'"+String(v).replace(/'/g,"''")+"'")}
+            }
+            out+='INSERT INTO '+table+' ('+cols+') VALUES ('+vals.join(', ')+');\n';
+        }
+        return out;
+    },
+    xml:function(rows,root){
+        if(!rows.length)return'<?xml version="1.0" encoding="UTF-8"?>\n<'+root+'/>';
+        var out='<?xml version="1.0" encoding="UTF-8"?>\n<'+root+'>\n';
+        for(var i=0;i<rows.length;i++){
+            out+='  <row>\n';
+            var keys=Object.keys(rows[i]);
+            for(var k=0;k<keys.length;k++){
+                var v=rows[i][keys[k]];
+                if(v===null||v===undefined){
+                    out+='    <'+keys[k]+' xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>\n';
+                }else{
+                    out+='    <'+keys[k]+'>'+escapeXml(v)+'</'+keys[k]+'>\n';
+                }
+            }
+            out+='  </row>\n';
+        }
+        out+='</'+root+'>';
+        return out;
+    },
+    xls:function(rows){
+        if(!rows.length)return'';
+        var keys=Object.keys(rows[0]);
+        var out='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"></head><body><table border="1"><thead><tr>';
+        for(var k=0;k<keys.length;k++)out+='<th>'+escapeXml(keys[k])+'</th>';
+        out+='</tr></thead><tbody>';
+        for(var i=0;i<rows.length;i++){
+            out+='<tr>';
+            for(var k=0;k<keys.length;k++){
+                var v=rows[i][keys[k]];
+                out+='<td>'+(v===null||v===undefined?'':escapeXml(v))+'</td>';
+            }
+            out+='</tr>';
+        }
+        out+='</tbody></table></body></html>';
+        return out;
+    },
+    txt:function(rows){return rows.map(function(r){return JSON.stringify(r)}).join('\n')}
+};
+
+/* ============================================================
+ *  SECTION 13: QA TOOLS
+ * ============================================================ */
+var PasswordMeter={
+    calculateEntropy:function(password){
+        if(!password||password.length===0)return 0;
+        var poolSize=0;
+        if(/[a-z]/.test(password))poolSize+=26;
+        if(/[A-Z]/.test(password))poolSize+=26;
+        if(/[0-9]/.test(password))poolSize+=10;
+        if(/[^a-zA-Z0-9]/.test(password))poolSize+=32;
+        if(poolSize===0)return 0;
+        return Math.floor(password.length*Math.log2(poolSize));
+    },
+    getCategory:function(entropy,len){
+        if(len<8)return{level:0,label:'Очень слабый',color:'var(--danger)',desc:'Менее 8 символов — взламывается мгновенно'};
+        if(entropy<40)return{level:1,label:'Слабый',color:'var(--danger)',desc:'Поддаётся brute-force за минуты/часы'};
+        if(entropy<60)return{level:2,label:'Средний',color:'#d4a017',desc:'Устойчив к онлайн-атакам, но уязвим к offline'};
+        if(entropy<80)return{level:3,label:'Сильный',color:'var(--success)',desc:'Устойчив к большинству атак'};
+        if(entropy<100)return{level:4,label:'Очень сильный',color:'var(--success)',desc:'Требует значительных вычислительных ресурсов'};
+        return{level:5,label:'Исключительный',color:'#2ecc71',desc:'Практически неуязвим к brute-force'};
+    },
+    estimateCrackTime:function(entropy){
+        var combinations=Math.pow(2,entropy);
+        var seconds=combinations/10000000000/2;
+        if(seconds<1)return'мгновенно';
+        if(seconds<60)return Math.floor(seconds)+' сек';
+        if(seconds<3600)return Math.floor(seconds/60)+' мин';
+        if(seconds<86400)return Math.floor(seconds/3600)+' ч';
+        if(seconds<31536000)return Math.floor(seconds/86400)+' дн';
+        if(seconds<31536000*1000)return Math.floor(seconds/31536000)+' лет';
+        if(seconds<31536000*1000000)return Math.floor(seconds/31536000/1000)+' тыс. лет';
+        if(seconds<31536000*1000000000)return Math.floor(seconds/31536000/1000000)+' млн лет';
+        return'миллиарды лет';
+    },
+    checkPolicies:function(password){
+        var checks={
+            length8:password.length>=8,
+            length12:password.length>=12,
+            length16:password.length>=16,
+            length64:password.length<=64,
+            hasUpper:/[A-Z]/.test(password),
+            hasLower:/[a-z]/.test(password),
+            hasDigit:/[0-9]/.test(password),
+            hasSpecial:/[^a-zA-Z0-9]/.test(password),
+            noRepeats:!/(.)\1{2,}/.test(password),
+            noCommon:!/^(password|123456|qwerty|admin)/i.test(password)
+        };
+        var policies={
+            legacy:{name:'Legacy Corporate',required:['length8','length64','hasUpper','hasLower','hasDigit','hasSpecial']},
+            strong:{name:'Strong (16+)',required:['length16','length64','hasUpper','hasLower','hasDigit','hasSpecial']},
+            nist:{name:'NIST SP 800-63B',required:['length8','length64','noCommon']},
+            passphrase:{name:'Passphrase',required:['length12','length64','hasLower']}
+        };
+        var result={};
+        for(var policy in policies){
+            var reqs=policies[policy].required;
+            var passed=reqs.filter(function(r){return checks[r]}).length;
+            result[policy]={name:policies[policy].name,passed:passed,total:reqs.length,ok:passed===reqs.length};
+        }
+        return result;
+    },
+    renderReport:function(password){
+        var entropy=this.calculateEntropy(password);
+        var cat=this.getCategory(entropy,password.length);
+        var crackTime=this.estimateCrackTime(entropy);
+        var policies=this.checkPolicies(password);
+        
+        var html='<div style="padding:12px;background:var(--bg);border-radius:3px;border:1px solid var(--border);margin-top:10px">';
+        html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+        html+='<div style="font-weight:600;color:'+cat.color+';font-size:14px">'+cat.label+'</div>';
+        html+='<div style="font-size:11px;color:var(--text-muted)">Длина: '+password.length+' | Энтропия: '+entropy+' бит</div>';
+        html+='</div>';
+        var barWidth=Math.min(100,cat.level*20);
+        html+='<div style="width:100%;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px">';
+        html+='<div style="height:100%;width:'+barWidth+'%;background:'+cat.color+';transition:width .3s"></div>';
+        html+='</div>';
+        html+='<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">'+cat.desc+'</div>';
+        html+='<div style="font-size:12px;margin-bottom:10px">⏱ Время взлома (10B попыток/сек): <strong>'+crackTime+'</strong></div>';
+        html+='<div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px">Соответствие политикам:</div>';
+        html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px">';
+        for(var p in policies){
+            var pol=policies[p];
+            var icon=pol.ok?'✅':'❌';
+            var color=pol.ok?'var(--success)':'var(--danger)';
+            html+='<div style="padding:6px 8px;background:var(--surface);border:1px solid var(--border);border-radius:3px;font-size:11px">';
+            html+='<span style="color:'+color+'">'+icon+'</span> '+pol.name+' <span style="color:var(--text-muted)">('+pol.passed+'/'+pol.total+')</span>';
+            html+='</div>';
+        }
+        html+='</div></div>';
+        return html;
+    }
+};
+
+function generateCredTool(){
+    var tool=document.getElementById('cred-tool').value;
+    var eE=document.getElementById('cred-error');var rE=document.getElementById('cred-result');eE.style.display='none';rE.style.display='none';var html='';
+    try{
+        if(tool==='pass-gen'){
+            var policy=document.getElementById('pass-policy').value;
+            var len=parseInt(document.getElementById('pass-len').value,10)||16;
+            var mode=document.getElementById('pass-mode').value;
+            var opts={len:len,mode:mode,policy:policy,upper:document.getElementById('pass-upper').checked,lower:document.getElementById('pass-lower').checked,digit:document.getElementById('pass-digit').checked,special:document.getElementById('pass-special').checked,noSimilar:document.getElementById('pass-no-similar').checked,noRepeat:document.getElementById('pass-no-repeat').checked};
+            
+            html+='<div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px">Сгенерированные пароли:</div>';
+            var strongest='';var strongestEntropy=0;
+            for(var i=0;i<10;i++){
+                var pwd=Person.generatePassword(opts);
+                var entropy=PasswordMeter.calculateEntropy(pwd);
+                if(entropy>strongestEntropy){strongestEntropy=entropy;strongest=pwd}
+                html+='<div class="boundary-item"><span class="boundary-label">Пароль '+(i+1)+' ('+entropy+' бит)</span><span style="font-weight:600;color:var(--primary);font-family:monospace">'+escapeHtml(pwd)+'</span></div>';
+            }
+            
+            if(strongest){
+                html+='<div style="font-size:12px;font-weight:600;color:var(--text-muted);margin:12px 0 6px">📊 Подробный анализ (лучший пароль):</div>';
+                html+='<div style="font-family:monospace;padding:8px;background:var(--surface);border:1px solid var(--border);border-radius:3px;margin-bottom:8px;word-break:break-all">'+escapeHtml(strongest)+'</div>';
+                html+=PasswordMeter.renderReport(strongest);
+            }
+        }else if(tool==='pass-boundary'){
+            var minL=8,maxL=64;var bounds=[{l:'minLength - 1 ('+(minL-1)+')',v:'A'.repeat(minL-1),ok:false},{l:'minLength ('+minL+')',v:'A'.repeat(minL-1)+'a',ok:true},{l:'maxLength ('+maxL+')',v:'A'.repeat(maxL),ok:true},{l:'maxLength + 1 ('+(maxL+1)+')',v:'A'.repeat(maxL+1),ok:false},{l:'No uppercase',v:'a'.repeat(minL),ok:false},{l:'No digit',v:'A'.repeat(minL),ok:false},{l:'Leading space',v:' A'.repeat(minL/2),ok:false},{l:'Trailing space',v:'A'.repeat(minL/2)+' ',ok:false},{l:'Only spaces',v:' '.repeat(minL),ok:false},{l:'Empty',v:'',ok:false},{l:'NULL',v:null,ok:false}];
+            for(var i=0;i<bounds.length;i++){var col=bounds[i].ok?'var(--success)':'var(--danger)';var ic=bounds[i].ok?'✅':'❌';html+='<div class="boundary-item"><span class="boundary-label">'+ic+' '+escapeHtml(bounds[i].l)+'</span><span style="font-weight:600;color:'+col+';font-family:monospace;max-width:60%;word-break:break-all">'+escapeHtml(bounds[i].v===null?'NULL':bounds[i].v)+'</span></div>'}
+        }else if(tool==='pattern'){
+            var patterns=['EMP-{{date}}-{{digits:6}}','{{letters:3}}-{{number:100:999}}','USR_{{uuid}}','TEST-{{letters:2}}{{digits:4}}','{{first_name}}.{{last_name}}','ORD-AA-999999'];
+            for(var i=0;i<patterns.length;i++){var res=generatePattern(patterns[i]);html+='<div class="boundary-item"><span class="boundary-label">Шаблон: '+escapeHtml(patterns[i])+'</span><span style="font-weight:600;color:var(--primary);font-family:monospace">'+escapeHtml(res)+'</span></div>'}
+        }
+        rE.innerHTML=html;rE.style.display='block';
+    }catch(e){eE.textContent='Ошибка: '+e.message;eE.style.display='block'}
+}
+function updateCredUI(){
+    var tool=document.getElementById('cred-tool').value;
+    document.getElementById('cred-policy-group').style.display=tool==='pass-gen'?'flex':'none';
+    document.getElementById('cred-len-group').style.display=(tool==='pass-gen'||tool==='pass-boundary')?'flex':'none';
+    document.getElementById('cred-mode-group').style.display=tool==='pass-gen'?'flex':'none';
+    document.getElementById('cred-opts-group').style.display=tool==='pass-gen'?'flex':'none';
+}
+
+function analyzeCustomPassword(){
+    var pwd=document.getElementById('pass-check-input').value;
+    var result=document.getElementById('pass-check-result');
+    if(!pwd){result.innerHTML='<div style="color:var(--text-muted);font-size:12px">Введите пароль</div>';return}
+    result.innerHTML=PasswordMeter.renderReport(pwd);
+}
+
+function generateBoundary(){
+    var type=document.getElementById('boundary-type').value;
+    var min=parseInt(document.getElementById('boundary-min').value,10);
+    var max=parseInt(document.getElementById('boundary-max').value,10);
+    var eE=document.getElementById('boundary-error');
+    var rE=document.getElementById('boundary-result');
+    eE.style.display='none';rE.style.display='none';
+    if(isNaN(min)||isNaN(max)){eE.textContent='Введите корректные числа';eE.style.display='block';return}
+    if(min>max){eE.textContent='Минимум > максимума';eE.style.display='block';return}
+    rE.style.display='block';var html='';
+    if(type==='number'){var v=[{l:'min - 1',v:min-1},{l:'min',v:min},{l:'min + 1',v:min+1},{l:'Среднее',v:Math.floor((min+max)/2)},{l:'max - 1',v:max-1},{l:'max',v:max},{l:'max + 1',v:max+1}];for(var i=0;i<v.length;i++)html+='<div class="boundary-item"><span class="boundary-label">'+v[i].l+'</span><span style="font-weight:600;color:var(--primary)">'+v[i].v+'</span></div>'}
+    else{var l=[{l:'min - 1',n:Math.max(0,min-1)},{l:'min',n:min},{l:'min + 1',n:min+1},{l:'Средняя',n:Math.floor((min+max)/2)},{l:'max - 1',n:max-1},{l:'max',n:max},{l:'max + 1',n:max+1}];for(var i=0;i<l.length;i++){var s='';for(var j=0;j<l[i].n;j++)s+='A';var d=l[i].n>50?s.substr(0,47)+'...':s;html+='<div class="boundary-item"><span class="boundary-label">'+l[i].l+' ('+l[i].n+' симв.)</span><span style="font-weight:600;color:var(--primary);font-family:monospace">'+d+'</span></div>'}}
+    rE.innerHTML=html;
+}
+
+function formatDate(d,f){if(!(d instanceof Date)||isNaN(d.getTime()))return'—';var dd=d.getDate()<10?'0'+d.getDate():''+d.getDate();var mm=(d.getMonth()+1)<10?'0'+(d.getMonth()+1):''+(d.getMonth()+1);var y=d.getFullYear();if(f==='iso')return y+'-'+mm+'-'+dd;if(f==='mdy')return mm+'/'+dd+'/'+y;return dd+'.'+mm+'.'+y}
+function randomDateBetween(a,b){return new Date(a.getTime()+rnd()*(b.getTime()-a.getTime()))}
+
+function updateDateUI(){var m=document.getElementById('date-mode').value;document.getElementById('date-age-group').style.display=m==='age'?'flex':'none';document.getElementById('date-range-from-group').style.display=m==='range'?'flex':'none';document.getElementById('date-range-to-group').style.display=m==='range'?'flex':'none';document.getElementById('date-count-group').style.display=(m==='invalid'||m==='edge')?'none':'flex'}
+
+function generateDates(){
+    var mode=document.getElementById('date-mode').value;
+    var format=document.getElementById('date-format').value;
+    var eE=document.getElementById('date-error');
+    var rE=document.getElementById('date-result');
+    eE.style.display='none';rE.style.display='none';
+    var items=[];
+    try{
+        if(mode==='valid'){var c=parseInt(document.getElementById('date-count').value,10)||10;var f=new Date(1950,0,1);var t=new Date(2026,8,30);for(var i=0;i<c;i++){items.push({l:'Валидная дата',v:formatDate(randomDateBetween(f,t),format),ok:true})}}
+        else if(mode==='invalid'){var inv=[{l:'31 февраля',v:'31.02.2023'},{l:'29 февраля невисокосный',v:'29.02.2023'},{l:'29.02.1900 (не високосный!)',v:'29.02.1900'},{l:'32 января',v:'32.01.2023'},{l:'00.00.0000',v:'00.00.0000'},{l:'13 месяц',v:'15.13.2023'},{l:'31 апреля',v:'31.04.2023'},{l:'Буквы',v:'ab.cd.efgh'},{l:'Пустая строка',v:''},{l:'Дата из будущего',v:'01.01.2099'}];for(var i=0;i<inv.length;i++)items.push({l:inv[i].l,v:inv[i].v||'(пусто)',ok:false})}
+        else if(mode==='age'){var th=parseInt(document.getElementById('date-age-threshold').value,10);if(isNaN(th)||th<0||th>150){eE.textContent='Порог 0-150';eE.style.display='block';return}var today=new Date();today.setHours(0,0,0,0);var ex=new Date(today.getFullYear()-th,today.getMonth(),today.getDate());var db=new Date(ex);db.setDate(db.getDate()+1);var da=new Date(ex);da.setDate(da.getDate()-1);items.push({l:'Сегодня (0 лет)',v:formatDate(today,format),ok:true});items.push({l:'Вчера',v:formatDate(new Date(today.getTime()-86400000),format),ok:true});items.push({l:'Завтра (будущее)',v:formatDate(new Date(today.getTime()+86400000),format),ok:false});items.push({l:'Ровно '+th+' лет',v:formatDate(ex,format),ok:true});items.push({l:th+' лет + 1 день',v:formatDate(da,format),ok:true});items.push({l:th+' лет - 1 день',v:formatDate(db,format),ok:true});items.push({l:'100 лет',v:formatDate(new Date(today.getFullYear()-100,today.getMonth(),today.getDate()),format),ok:true});items.push({l:'150 лет (крайняя)',v:formatDate(new Date(today.getFullYear()-150,today.getMonth(),today.getDate()),format),ok:true});items.push({l:'200 лет (невалидно)',v:formatDate(new Date(today.getFullYear()-200,today.getMonth(),today.getDate()),format),ok:false})}
+        else if(mode==='range'){var fs=document.getElementById('date-range-from').value;var ts=document.getElementById('date-range-to').value;if(!fs||!ts){eE.textContent='Укажите диапазон';eE.style.display='block';return}var fd=new Date(fs);var td=new Date(ts);if(fd>td){eE.textContent='От > До';eE.style.display='block';return}var c=parseInt(document.getElementById('date-count').value,10)||10;items.push({l:'Min',v:formatDate(fd,format),ok:true});items.push({l:'Min + 1 день',v:formatDate(new Date(fd.getTime()+86400000),format),ok:true});items.push({l:'Min - 1 день (вне)',v:formatDate(new Date(fd.getTime()-86400000),format),ok:false});for(var i=0;i<Math.max(0,c-4);i++){items.push({l:'В диапазоне',v:formatDate(randomDateBetween(fd,td),format),ok:true})}items.push({l:'Max - 1 день',v:formatDate(new Date(td.getTime()-86400000),format),ok:true});items.push({l:'Max',v:formatDate(td,format),ok:true});items.push({l:'Max + 1 день (вне)',v:formatDate(new Date(td.getTime()+86400000),format),ok:false})}
+        else if(mode==='edge'){items.push({l:'29.02.2024 (високосный)',v:formatDate(new Date(2024,1,29),format),ok:true});items.push({l:'28.02.2024',v:formatDate(new Date(2024,1,28),format),ok:true});items.push({l:'31.12.2023 (конец года)',v:formatDate(new Date(2023,11,31),format),ok:true});items.push({l:'01.01.2024 (начало года)',v:formatDate(new Date(2024,0,1),format),ok:true});items.push({l:'31.01.2024 (конец января)',v:formatDate(new Date(2024,0,31),format),ok:true});items.push({l:'30.04.2024 (конец апреля)',v:formatDate(new Date(2024,3,30),format),ok:true});items.push({l:'01.01.1970 (Unix epoch)',v:formatDate(new Date(1970,0,1),format),ok:true});items.push({l:'01.01.2000 (Y2K)',v:formatDate(new Date(2000,0,1),format),ok:true});items.push({l:'29.02.2000 (делится на 400)',v:formatDate(new Date(2000,1,29),format),ok:true});items.push({l:'29.02.1900 (НЕ високосный!)',v:'29.02.1900',ok:false})}
+        if(!items.length){eE.textContent='Нет данных';eE.style.display='block';return}
+        var html='';for(var i=0;i<items.length;i++){var col=items[i].ok?'var(--success)':'var(--danger)';var ic=items[i].ok?'✅':'❌';html+='<div class="boundary-item"><span class="boundary-label">'+ic+' '+escapeHtml(items[i].l)+'</span><span style="font-weight:600;color:'+col+';font-family:monospace">'+escapeHtml(items[i].v)+'</span></div>'}
+        rE.innerHTML=html;rE.style.display='block';
+    }catch(e){eE.textContent='Ошибка: '+e.message;eE.style.display='block'}
+}
+
+function generateAddresses(){
+    var mode=document.getElementById('addr-mode').value;
+    var count=parseInt(document.getElementById('addr-count').value,10)||10;
+    var eE=document.getElementById('addr-error');
+    var rE=document.getElementById('addr-result');
+    eE.style.display='none';rE.style.display='none';
+    var items=[];
+    try{
+        if(mode==='valid'){
+            for(var i=0;i<count;i++){
+                var a=Address.generate({});
+                items.push({l:'Валидный адрес',v:a.full,ok:true});
+            }
+        }else if(mode==='valid_parts'){
+            for(var i=0;i<Math.min(count,10);i++){
+                var a=Address.generate({});
+                items.push({l:'Индекс',v:a.zip,ok:true});
+                items.push({l:'Регион',v:a.region,ok:true});
+                items.push({l:'Город',v:a.city,ok:true});
+                items.push({l:'Улица',v:a.street,ok:true});
+                items.push({l:'Дом',v:a.house,ok:true});
+                items.push({l:'Квартира',v:''+a.flat,ok:true});
+                items.push({l:'—',v:'—',ok:true});
+            }
+        }else if(mode==='invalid'){
+            var types=['no_house','no_flat','no_street','only_city','empty','latin','special_chars','wrong_zip_short','wrong_zip_long','negative_house','zero_house','letters_in_house','spaces_only'];
+            for(var i=0;i<types.length;i++){
+                var v=Address.generateInvalid(types[i]);
+                var validation=Address.validate(v);
+                items.push({l:types[i].replace(/_/g,' '),v:v||'(пусто)',ok:validation.valid});
+            }
+        }else if(mode==='edge'){
+            items.push({l:'Максимально длинный дом',v:'123456, г. Москва, ул. Ленина, д. 9999 к. 999 стр. 99, кв. 9999',ok:true});
+            items.push({l:'Без квартиры (нежилое)',v:'123456, г. Москва, ул. Ленина, д. 10, оф. 5',ok:true});
+            items.push({l:'С дробным номером',v:'123456, г. Москва, ул. Ленина, д. 10/2',ok:true});
+            items.push({l:'Микрорайон',v:'123456, г. Москва, мкр. Северный, д. 5, кв. 100',ok:true});
+            items.push({l:'Посёлок',v:'123456, Московская обл., пос. Московский, ул. Центральная, д. 1',ok:true});
+            items.push({l:'Село',v:'123456, Тульская обл., с. Яснополянское, ул. Школьная, д. 5',ok:true});
+            items.push({l:'Деревня',v:'123456, Тверская обл., д. Васильево, д. 10',ok:true});
+            items.push({l:'ПГТ',v:'123456, Московская обл., п.г.т. Красногорск, ул. Ленина, д. 1',ok:true});
+            items.push({l:'С буквой в доме (корпус)',v:'123456, г. Москва, ул. Ленина, д. 10А',ok:false});
+            items.push({l:'Слаш с латиницей',v:'123456, г. Moscow, Lenina st., 10',ok:false});
+            items.push({l:'Индекс 000000',v:'000000, г. Москва, ул. Ленина, д. 1',ok:false});
+            items.push({l:'Дом 0',v:'123456, г. Москва, ул. Ленина, д. 0',ok:false});
+            items.push({l:'Квартира 0',v:'123456, г. Москва, ул. Ленина, д. 10, кв. 0',ok:false});
+            items.push({l:'Спецсимволы',v:'123456, г. Москва, ул. Ленина <script>, д. 10',ok:false});
+        }
+        if(!items.length){eE.textContent='Нет данных';eE.style.display='block';return}
+        var html='';
+        for(var i=0;i<items.length;i++){
+            var col=items[i].ok?'var(--success)':'var(--danger)';
+            var ic=items[i].ok?'✅':'❌';
+            html+='<div class="boundary-item"><span class="boundary-label">'+ic+' '+escapeHtml(items[i].l)+'</span><span style="font-weight:600;color:'+col+';font-family:monospace;max-width:60%;word-break:break-all">'+escapeHtml(items[i].v)+'</span></div>';
+        }
+        rE.innerHTML=html;
+        rE.style.display='block';
+    }catch(e){
+        eE.textContent='Ошибка: '+e.message;
+        eE.style.display='block';
+    }
+}
+
+function generateString(){
+    var len=parseInt(document.getElementById('string-length').value,10);
+    var u=document.getElementById('str-upper').checked;
+    var l=document.getElementById('str-lower').checked;
+    var d=document.getElementById('str-digits').checked;
+    var cy=document.getElementById('str-cyrillic').checked;
+    var em=document.getElementById('str-emoji').checked;
+    var sp=document.getElementById('str-special').checked;
+    var ws=document.getElementById('str-spaces').checked;
+    var eE=document.getElementById('string-error');
+    eE.style.display='none';
+    if(isNaN(len)||len<1){eE.textContent='Минимум 1';eE.style.display='block';return}
+    var ch='';if(u)ch+='ABCDEFGHIJKLMNOPQRSTUVWXYZ';if(l)ch+='abcdefghijklmnopqrstuvwxyz';if(d)ch+='0123456789';if(cy)ch+='АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя';if(ws)ch+=' ';if(sp)ch+='!@#$%^&*()_+-=[]{}|;:,.<>?';
+    var emojis=['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','🚀','💥','💯','🎉','✨','🔥','💪','❤️'];
+    var r='';
+    if(em){for(var i=0;i<len;i++)r+=emojis[Math.floor(rnd()*emojis.length)]}
+    else if(ch.length===0){eE.textContent='Выберите набор символов';eE.style.display='block';return}
+    else{for(var i=0;i<len;i++)r+=ch[Math.floor(rnd()*ch.length)]}
+    document.getElementById('string-output').value=r;
+    addToHistory('STRING',r.substr(0,50)+(r.length>50?'...':''));
+}
+
+function applyPreset(p){
+    var o=document.getElementById('string-output');var t='';
+    if(p==='sqli')t="' OR '1'='1\n' OR 1=1 --\n'; DROP TABLE users; --\n' UNION SELECT null, username, password FROM users --\n1' AND '1'='1\nadmin'--\n' OR ''='";
+    else if(p==='xss')t='<script>alert("XSS")<\/script>\n<img src=x onerror=alert(1)>\n<svg/onload=alert(1)>\n"><script>alert(document.cookie)<\/script>\n<body onload=alert(1)>\n<input onfocus=alert(1) autofocus>';
+    else if(p==='emoji'){var em=['😀','😃','😄','😁','😆','🚀','💥','💯','🎉','✨','🔥','💪','❤️'];for(var i=0;i<50;i++)t+=em[Math.floor(rnd()*em.length)]}
+    else if(p==='zerowidth')t='Текст с\u200Bнулевым пробелом\n\uFEFFТекст с BOM\nТекст\u00A0с\u00A0неразрывным\u00A0пробелом\n   Текст с пробелами   \n\tТекст с табуляцией';
+    else if(p==='overflow'){var ls=[256,512,1024,2048,4096,8192];var ps=[];for(var i=0;i<ls.length;i++){var s='';for(var j=0;j<ls[i];j++)s+='A';ps.push('Длина '+ls[i]+': '+s)}t=ps.join('\n\n')}
+    else if(p==='unicode')t='Кириллица: АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ\nИероглифы: 中文測試日本語テスト한국어테스트\nАрабский: اختبار باللغة العربية\nИврит: בדיקה בעברית\nГреческий: Δοκιμή στα ελληνικά\nСимволы: ©®™℠€£¥¢₹₽₿';
+    o.value=t;addToHistory('PRESET',p.toUpperCase());
+}
+
+/* ============================================================
+ *  SECTION 14: UI LOGIC (Генераторы)
+ * ============================================================ */
+var isInvalidMode=false;
+
+function toggleInvalidMode(){isInvalidMode=document.getElementById('invalidMode').checked;generateAll()}
+
+function gen(type){
+    var v='';var inv=isInvalidMode;
+    if(type==='uuid')v=Gen.uuid();
+    else if(type==='innul')v=Gen.innul(inv);
+    else if(type==='innfl')v=Gen.innfl(inv);
+    else if(type==='snils')v=Gen.snils(inv);
+    else if(type==='ogrn')v=Gen.ogrn(inv);
+    else if(type==='kpp')v=Gen.kpp();
+    else if(type==='passport')v=Gen.passport();
+    else if(type==='phone')v=Gen.phone();
+    var el=document.getElementById('val-'+type);el.innerText=v;
+    if(inv&&type!=='uuid'&&type!=='kpp'&&type!=='passport'&&type!=='phone')el.classList.add('invalid');else el.classList.remove('invalid');
+    addToHistory(type.toUpperCase(),v);
+}
+
+function generateAll(){
+    var seed=document.getElementById('globalSeed').value;
+    setSeed(seed?parseInt(seed,10):null);
+    ['uuid','innul','innfl','snils','ogrn','kpp','passport','phone'].forEach(gen);
+    genPerson();genCompany();genAddress();genBank();
+}
+
+function renderPersonCard(p){
+    var el=document.getElementById('val-person');
+    el.innerHTML='<div><strong>ФИО:</strong> '+escapeHtml(p.fullName)+'</div>'+
+        '<div><strong>Пол:</strong> '+(p.gender==='male'?'Мужской':'Женский')+'</div>'+
+        '<div><strong>Дата рождения:</strong> '+escapeHtml(p.birthDate)+'</div>'+
+        '<div><strong>Логин:</strong> '+escapeHtml(p.login)+'</div>'+
+        '<div><strong>Пароль:</strong> '+escapeHtml(p.password)+'</div>'+
+        '<div><strong>ИНН:</strong> '+escapeHtml(p.inn)+'</div>'+
+        '<div><strong>СНИЛС:</strong> '+escapeHtml(p.snils)+'</div>'+
+        '<div><strong>Паспорт:</strong> '+escapeHtml(p.passport)+'</div>'+
+        '<div><strong>Телефон:</strong> '+escapeHtml(p.phone)+'</div>'+
+        '<div><strong>Email:</strong> '+escapeHtml(p.email)+'</div>';
+}
+function generatePatternStandalone(){
+    var pattern=document.getElementById('pattern-standalone-input').value;
+    var count=parseInt(document.getElementById('pattern-standalone-count').value,10)||10;
+    var resultEl=document.getElementById('pattern-standalone-result');
+    
+    if(!pattern){
+        resultEl.innerHTML='<div style="color:var(--danger)">Введите шаблон</div>';
+        resultEl.style.display='block';
+        return;
+    }
+    
+    generatePattern._cachedPerson=null;
+    generatePattern._cachedCompany=null;
+    
+    var html='';
+    for(var i=0;i<count;i++){
+        var res=generatePattern(pattern);
+        html+='<div class="boundary-item"><span class="boundary-label">#'+(i+1)+'</span><span style="font-weight:600;color:var(--primary);font-family:monospace">'+escapeHtml(res)+'</span></div>';
+    }
+    resultEl.innerHTML=html;
+    resultEl.style.display='block';
+    
+    addToHistory('PATTERN',pattern);
+}
+
+function copyPatternResults(){
+    var items=document.querySelectorAll('#pattern-standalone-result .boundary-item span:last-child');
+    var lines=[];
+    for(var i=0;i<items.length;i++)lines.push(items[i].innerText);
+    if(lines.length>0&&copyToClipboard(lines.join('\n')))showToast('Скопировано '+lines.length+' строк');
+}
+
+function genPerson(){
+    var seed=document.getElementById('globalSeed').value;
+    setSeed(seed?parseInt(seed,10):null);
+    
+    var passOpts={
+        len:parseInt(document.getElementById('global-pass-len').value,10)||16,
+        mode:document.getElementById('global-pass-mode').value,
+        policy:document.getElementById('global-pass-policy').value,
+        upper:document.getElementById('global-pass-upper').checked,
+        lower:document.getElementById('global-pass-lower').checked,
+        digit:document.getElementById('global-pass-digit').checked,
+        special:document.getElementById('global-pass-special').checked,
+        noSimilar:document.getElementById('global-pass-no-similar').checked,
+        noRepeat:document.getElementById('global-pass-no-repeat').checked
+    };
+    
+    var p=Person.generate({
+        invalid:isInvalidMode,
+        loginStyle:'first.last',
+        len:passOpts.len,
+        mode:passOpts.mode,
+        policy:passOpts.policy,
+        upper:passOpts.upper,
+        lower:passOpts.lower,
+        digit:passOpts.digit,
+        special:passOpts.special,
+        noSimilar:passOpts.noSimilar,
+        noRepeat:passOpts.noRepeat
+    });
+    
+    renderPersonCard(p);
+    addToHistory('PERSON',p.fullName);
+}
+function copyPerson(){var el=document.getElementById('val-person');if(copyToClipboard(el.innerText))showToast('Скопировано')}
+
+function renderCompanyCard(c){
+    var el=document.getElementById('val-company');
+    el.innerHTML='<div><strong>Название:</strong> '+escapeHtml(c.name)+'</div>'+
+        '<div><strong>Форма:</strong> '+escapeHtml(c.legalForm)+'</div>'+
+        '<div><strong>ИНН:</strong> '+escapeHtml(c.inn)+'</div>'+
+        '<div><strong>КПП:</strong> '+escapeHtml(c.kpp)+'</div>'+
+        '<div><strong>ОГРН:</strong> '+escapeHtml(c.ogrn)+'</div>'+
+        '<div><strong>Email:</strong> '+escapeHtml(c.email)+'</div>';
+}
+function genCompany(){var seed=document.getElementById('globalSeed').value;setSeed(seed?parseInt(seed,10):null);var c=Company.generate({invalid:isInvalidMode});renderCompanyCard(c);addToHistory('COMPANY',c.name)}
+function copyCompany(){var el=document.getElementById('val-company');if(copyToClipboard(el.innerText))showToast('Скопировано')}
+
+function renderAddressCard(a){
+    var el=document.getElementById('val-address');
+    el.innerHTML='<div><strong>Индекс:</strong> '+escapeHtml(a.zip)+'</div>'+
+        '<div><strong>Регион:</strong> '+escapeHtml(a.region)+' ('+escapeHtml(a.regionCode)+')</div>'+
+        '<div><strong>Город:</strong> '+escapeHtml(a.city)+'</div>'+
+        '<div><strong>Улица:</strong> '+escapeHtml(a.street)+'</div>'+
+        '<div><strong>Дом:</strong> '+escapeHtml(a.house)+'</div>'+
+        '<div><strong>Квартира:</strong> '+escapeHtml(''+a.flat)+'</div>'+
+        '<div style="grid-column:1/-1"><strong>Полный адрес:</strong> '+escapeHtml(a.full)+'</div>';
+}
+function genAddress(){var seed=document.getElementById('globalSeed').value;setSeed(seed?parseInt(seed,10):null);var a=Address.generate({invalid:isInvalidMode});renderAddressCard(a);addToHistory('ADDRESS',a.full)}
+function copyAddress(){var el=document.getElementById('val-address');if(copyToClipboard(el.innerText))showToast('Скопировано')}
+
+function renderBankCard(b){
+    var el=document.getElementById('val-bank');
+    el.innerHTML='<div style="grid-column:1/-1"><strong>Банк:</strong> '+escapeHtml(b.bankName)+'</div>'+
+        '<div><strong>БИК:</strong> '+escapeHtml(b.bic)+'</div>'+
+        '<div><strong>Корр. счёт:</strong> '+escapeHtml(b.corrAccount)+'</div>'+
+        '<div style="grid-column:1/-1"><strong>Расчётный счёт:</strong> '+escapeHtml(b.account)+'</div>'+
+        '<div><strong>Тип счёта:</strong> '+escapeHtml(b.accountType)+'</div>'+
+        '<div><strong>Валюта:</strong> '+escapeHtml(b.currency)+'</div>'+
+        '<div style="grid-column:1/-1"><strong>SWIFT:</strong> '+escapeHtml(b.swift)+'</div>';
+}
+function genBank(){var seed=document.getElementById('globalSeed').value;setSeed(seed?parseInt(seed,10):null);var b=Bank.generate({useRealBic:false,accountType:'legal',currency:'RUB'});renderBankCard(b);addToHistory('BANK',b.bankName+' / '+b.bic)}
+function copyBank(){var el=document.getElementById('val-bank');if(copyToClipboard(el.innerText))showToast('Скопировано')}
+
+/* ============================================================
+ *  SECTION 15: BATCH GENERATION
+ * ============================================================ */
+var lastBatchRows=[];
+
+function generateBatch(){
+    var count=parseInt(document.getElementById('batch-count').value,10)||10;
+    var mode=document.getElementById('batch-mode').value;
+    var ratio=parseInt(document.getElementById('mixed-ratio').value,10)||10;
+    var seed=document.getElementById('batch-seed').value;
+    setSeed(seed?parseInt(seed,10):null);
+    generatePattern._cachedPerson=null;
+    generatePattern._cachedCompany=null;
+    lastBatchRows=[];
+    for(var i=0;i<count;i++){
+        var invalid=false;
+        if(mode==='invalid')invalid=true;
+        else if(mode==='mixed')invalid=(rnd()*100)<ratio;
+        lastBatchRows.push(generateRowBySchema({invalid:invalid}));
+    }
+    renderPreview();
+    renderBatchOutput();
+}
+
+function renderPreview(){
+    var table=document.getElementById('preview-table');
+    var thead=table.querySelector('thead');
+    var tbody=table.querySelector('tbody');
+    if(!lastBatchRows.length){thead.innerHTML='';tbody.innerHTML='<tr><td style="text-align:center;color:var(--text-muted);padding:20px">Нет данных</td></tr>';return}
+    var keys=Object.keys(lastBatchRows[0]);
+    var h='<tr>';for(var k=0;k<keys.length;k++)h+='<th>'+escapeHtml(keys[k])+'</th>';h+='</tr>';
+    thead.innerHTML=h;
+    var rows=lastBatchRows.slice(0,20);
+    var b='';
+    for(var i=0;i<rows.length;i++){
+        b+='<tr>';
+        for(var k=0;k<keys.length;k++){
+            var v=rows[i][keys[k]];
+            if(v===null||v===undefined){
+                b+='<td class="null-val" title="NULL">NULL</td>';
+            }else if(v===''){
+                b+='<td class="null-val" title="Пустая строка">""</td>';
+            }else{
+                b+='<td title="'+escapeHtml(String(v))+'">'+escapeHtml(String(v))+'</td>';
+            }
+        }
+        b+='</tr>';
+    }
+    if(lastBatchRows.length>20)b+='<tr><td colspan="'+keys.length+'" style="text-align:center;color:var(--text-muted);padding:8px">... ещё '+(lastBatchRows.length-20)+' записей ...</td></tr>';
+    tbody.innerHTML=b;
+}
+
+function renderBatchOutput(){
+    var format=document.getElementById('batch-format').value;
+    var table=document.getElementById('batch-table').value.trim().replace(/[^a-zA-Z0-9_]/g,'')||'test_data';
+    var out='';
+    if(format==='json')out=Exporters.json(lastBatchRows);
+    else if(format==='csv')out=Exporters.csv(lastBatchRows);
+    else if(format==='sql')out=Exporters.sql(lastBatchRows,table);
+    else if(format==='xml')out=Exporters.xml(lastBatchRows,table);
+    else if(format==='xls')out=Exporters.xls(lastBatchRows);
+    else out=Exporters.txt(lastBatchRows);
+    document.getElementById('batch-output').value=out;
+}
+
+function downloadBatch(){
+    var text=document.getElementById('batch-output').value;
+    if(!text)return;
+    var format=document.getElementById('batch-format').value;
+    var ext='txt';var mime='text/plain';var bom='';
+    if(format==='json'){ext='json';mime='application/json'}
+    else if(format==='csv'){ext='csv';mime='text/csv;charset=utf-8;';bom='\uFEFF'}
+    else if(format==='sql'){ext='sql';mime='text/plain'}
+    else if(format==='xml'){ext='xml';mime='application/xml'}
+    else if(format==='xls'){ext='xls';mime='application/vnd.ms-excel';bom='\uFEFF'}
+    var blob=new Blob([bom+text],{type:mime});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;a.download='qa_data_'+Date.now()+'.'+ext;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    showToast('Файл скачан');
+}
+
+function copyBatchOutput(){var t=document.getElementById('batch-output').value;if(t&&copyToClipboard(t))showToast('Скопировано')}
+
+document.getElementById('batch-mode').addEventListener('change',function(){document.getElementById('mixed-ratio-group').style.display=this.value==='mixed'?'flex':'none'});
+document.getElementById('batch-format').addEventListener('change',function(){if(lastBatchRows.length)renderBatchOutput()});
+
+/* ============================================================
+ *  SECTION 16: VALIDATOR UI
+ * ============================================================ */
+function validateInput(){
+    var type=document.getElementById('val-type').value;
+    var input=document.getElementById('val-input').value.trim();
+    var rE=document.getElementById('val-result');
+    if(!input){rE.style.display='none';return}
+    var result;
+    if(type==='address')result=Address.validate(input);
+    else if(type==='bic')result=Bank.validateBic(input);
+    else if(type==='account')result=Bank.validateAccount(input);
+    else if(type==='corrAccount')result=Bank.validateCorrAccount(input);
+    else result={valid:Val[type](input),reason:Val[type](input)?'Формат и контрольная сумма верны':'Ошибка формата или контрольной суммы'};
+    rE.style.display='block';
+    if(result.valid){
+        rE.className='validation-result valid';
+        rE.innerText='✅ '+type.toUpperCase()+': '+result.reason;
+    }else{
+        rE.className='validation-result invalid';
+        rE.innerText='❌ '+type.toUpperCase()+': '+result.reason;
+    }
+}
+
+/* ============================================================
+ *  SECTION 17: HISTORY
+ * ============================================================ */
+function addToHistory(type,value){
+    var h=[];try{h=JSON.parse(localStorage.getItem('qa_gen_history')||'[]')}catch(e){h=[]}
+    h.unshift({type:type,value:value,time:new Date().toLocaleTimeString()});
+    if(h.length>20)h.pop();
+    try{localStorage.setItem('qa_gen_history',JSON.stringify(h))}catch(e){}
+    renderHistory();
+}
+function renderHistory(){
+    var h=[];try{h=JSON.parse(localStorage.getItem('qa_gen_history')||'[]')}catch(e){h=[]}
+    var c=document.getElementById('history-container');
+    if(!h.length){c.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:20px">История пуста</div>';return}
+    var html='';
+    for(var i=0;i<h.length;i++){
+        var sv=String(h[i].value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        html+='<div class="history-item"><div style="flex:1;min-width:0"><div style="font-weight:600;color:var(--primary)">'+h[i].type+'</div><div style="word-break:break-all">'+sv+'</div><div style="font-size:11px;color:var(--text-muted)">'+h[i].time+'</div></div><button class="btn btn-outline" data-copy-value="'+sv+'" style="padding:3px 6px;font-size:11px">📋</button></div>';
+    }
+    c.innerHTML=html;
+    var btns=c.querySelectorAll('button[data-copy-value]');
+    for(var i=0;i<btns.length;i++)btns[i].addEventListener('click',function(){var v=this.getAttribute('data-copy-value').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');if(copyToClipboard(v))showToast('Скопировано')});
+}
+function clearHistory(){try{localStorage.removeItem('qa_gen_history')}catch(e){}renderHistory()}
+
+/* ============================================================
+ *  SECTION 18: TABS & THEME
+ * ============================================================ */
+function switchTab(name){
+    var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');
+    var panels=document.querySelectorAll('.panel');for(var i=0;i<panels.length;i++)panels[i].classList.remove('active');
+    var t=document.querySelector('[data-tab="'+name+'"]');if(t)t.classList.add('active');
+    var p=document.getElementById('panel-'+name);if(p)p.classList.add('active');
+    if(name==='history')renderHistory();
+}
+function toggleTheme(){var c=document.documentElement.getAttribute('data-theme');document.documentElement.setAttribute('data-theme',c==='dark'?'light':'dark')}
+
+var tabs=document.querySelectorAll('.tab');
+for(var i=0;i<tabs.length;i++)tabs[i].addEventListener('click',function(){switchTab(this.getAttribute('data-tab'))});
+
+/* ============================================================
+ *  SECTION 20: UNIT TESTS
+ * ============================================================ */
+var TestRunner={
+    results:[],
+    isRunning:false,
+    
+    assert:{
+        equal:function(actual,expected,msg){
+            if(actual!==expected)return{pass:false,message:msg+' (ожидалось: '+expected+', получено: '+actual+')'};
+            return{pass:true};
+        },
+        match:function(value,regex,msg){
+            if(!regex.test(String(value)))return{pass:false,message:msg+' (значение: '+value+')'};
+            return{pass:true};
+        },
+        length:function(value,len,msg){
+            if(String(value).length!==len)return{pass:false,message:msg+' (длина: '+String(value).length+', ожидалось: '+len+')'};
+            return{pass:true};
+        },
+        range:function(value,min,max,msg){
+            if(value<min||value>max)return{pass:false,message:msg+' (значение: '+value+', диапазон: '+min+'-'+max+')'};
+            return{pass:true};
+        },
+        true:function(value,msg){
+            if(!value)return{pass:false,message:msg};
+            return{pass:true};
+        },
+        startsWith:function(value,prefix,msg){
+            if(!String(value).startsWith(prefix))return{pass:false,message:msg+' (значение: '+value+')'};
+            return{pass:true};
+        }
+    },
+    
+    tests:[
+        {
+            name:'UUID v4',
+            desc:'Формат XXXXXXXX-XXXX-4XXX-YXXX-XXXXXXXXXXXX',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var uuid=Gen.uuid();
+                    var r1=assert.match(uuid,/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/,'Неверный формат UUID');
+                    if(!r1.pass)errors.push(r1.message);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'ИНН ЮЛ',
+            desc:'10 цифр, контрольная сумма',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var inn=Gen.innul(false);
+                    var r1=assert.length(inn,10,'Длина ИНН ЮЛ');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.match(inn,/^\d{10}$/,'ИНН ЮЛ должен содержать только цифры');
+                    if(!r2.pass){errors.push(r2.message);continue}
+                    var r3=Val.innul(inn);
+                    if(!r3)errors.push('Неверная контрольная сумма ИНН ЮЛ: '+inn);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'ИНН ФЛ',
+            desc:'12 цифр, две контрольные суммы',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var inn=Gen.innfl(false);
+                    var r1=assert.length(inn,12,'Длина ИНН ФЛ');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.match(inn,/^\d{12}$/,'ИНН ФЛ должен содержать только цифры');
+                    if(!r2.pass){errors.push(r2.message);continue}
+                    var r3=Val.innfl(inn);
+                    if(!r3)errors.push('Неверная контрольная сумма ИНН ФЛ: '+inn);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'СНИЛС',
+            desc:'Формат XXX-XXX-XXX YY, контрольная сумма',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var snils=Gen.snils(false);
+                    var r1=assert.match(snils,/^\d{3}-\d{3}-\d{3} \d{2}$/,'Неверный формат СНИЛС');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=Val.snils(snils);
+                    if(!r2)errors.push('Неверная контрольная сумма СНИЛС: '+snils);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'ОГРН',
+            desc:'13 цифр, контрольная сумма',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var ogrn=Gen.ogrn(false);
+                    var r1=assert.length(ogrn,13,'Длина ОГРН');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.match(ogrn,/^\d{13}$/,'ОГРН должен содержать только цифры');
+                    if(!r2.pass){errors.push(r2.message);continue}
+                    var r3=Val.ogrn(ogrn);
+                    if(!r3)errors.push('Неверная контрольная сумма ОГРН: '+ogrn);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'КПП',
+            desc:'9 цифр, формат XXXXXXXXX',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var kpp=Gen.kpp();
+                    var r1=assert.length(kpp,9,'Длина КПП');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.match(kpp,/^\d{9}$/,'КПП должен содержать только цифры');
+                    if(!r2.pass)errors.push(r2.message);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Паспорт РФ',
+            desc:'Формат XXXX XXXXXX',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var passport=Gen.passport();
+                    var r1=assert.match(passport,/^\d{4} \d{6}$/,'Неверный формат паспорта');
+                    if(!r1.pass)errors.push(r1.message);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Телефон РФ',
+            desc:'Формат +7 XXX XXX-XX-XX',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var phone=Gen.phone();
+                    var r1=assert.match(phone,/^\+7 \d{3} \d{3}-\d{2}-\d{2}$/,'Неверный формат телефона');
+                    if(!r1.pass)errors.push(r1.message);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Email',
+            desc:'Содержит @ и домен',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var email=Gen.email();
+                    var r1=assert.match(email,/^[^@]+@[^@]+\.[^@]+$/,'Неверный формат email');
+                    if(!r1.pass)errors.push(r1.message);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Person (согласованность)',
+            desc:'Пол согласован с ФИО',
+            run:function(iterations){
+                var errors=[];
+                for(var i=0;i<iterations;i++){
+                    var person=Person.generate({});
+                    var isMale=person.gender==='male';
+                    var lastNameEnds=person.lastName.slice(-1);
+                    var firstNameEnds=person.firstName.slice(-1);
+                    var middleNameEnds=person.middleName.slice(-2);
+                    
+                    if(isMale){
+                        if(middleNameEnds!=='ич'){
+                            errors.push('Мужское отчество без -ич: '+person.middleName);
+                        }
+                    }else{
+                        if(['а','я'].indexOf(lastNameEnds)===-1){
+                            errors.push('Женская фамилия без -а/-я: '+person.lastName);
+                        }
+                        if(['а','я'].indexOf(firstNameEnds)===-1){
+                            errors.push('Женское имя без -а/-я: '+person.firstName);
+                        }
+                        if(middleNameEnds!=='на'){
+                            errors.push('Женское отчество без -на: '+person.middleName);
+                        }
+                    }
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Company (согласованность)',
+            desc:'Название грамматически корректно',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var company=Company.generate({});
+                    var r1=assert.match(company.name,/«.*»/,'Название должно содержать кавычки «»');
+                    if(!r1.pass)errors.push(r1.message+' : '+company.name);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Адрес РФ',
+            desc:'Структура: индекс, регион, город, улица, дом',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var addr=Address.generate({});
+                    var r1=assert.length(addr.zip,6,'Длина индекса');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.match(addr.zip,/^\d{6}$/,'Индекс должен содержать только цифры');
+                    if(!r2.pass){errors.push(r2.message);continue}
+                    var r3=Address.validate(addr.full);
+                    if(!r3.valid)errors.push('Невалидный адрес: '+addr.full+' ('+r3.reason+')');
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'БИК',
+            desc:'9 цифр, начинается с 04',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var bank=Bank.generate({useRealBic:false});
+                    var r1=assert.length(bank.bic,9,'Длина БИК');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.startsWith(bank.bic,'04','БИК должен начинаться с 04');
+                    if(!r2.pass){errors.push(r2.message);continue}
+                    var r3=Bank.validateBic(bank.bic);
+                    if(!r3.valid)errors.push('Невалидный БИК: '+bank.bic+' ('+r3.reason+')');
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Расчётный счёт',
+            desc:'20 цифр, контрольная сумма',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var bank=Bank.generate({useRealBic:false});
+                    var r1=assert.length(bank.account,20,'Длина р/с');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.match(bank.account,/^\d{20}$/,'Р/с должен содержать только цифры');
+                    if(!r2.pass){errors.push(r2.message);continue}
+                    var r3=Bank.validateAccount(bank.account,bank.bic);
+                    if(!r3.valid)errors.push('Невалидный р/с: '+bank.account+' ('+r3.reason+')');
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Корр. счёт',
+            desc:'20 цифр, начинается с 301, связь с БИК',
+            run:function(iterations){
+                var errors=[];
+                var assert=TestRunner.assert;
+                for(var i=0;i<iterations;i++){
+                    var bank=Bank.generate({useRealBic:false});
+                    var r1=assert.length(bank.corrAccount,20,'Длина к/с');
+                    if(!r1.pass){errors.push(r1.message);continue}
+                    var r2=assert.startsWith(bank.corrAccount,'301','К/с должен начинаться с 301');
+                    if(!r2.pass){errors.push(r2.message);continue}
+                    var r3=Bank.validateCorrAccount(bank.corrAccount,bank.bic);
+                    if(!r3.valid)errors.push('Невалидный к/с: '+bank.corrAccount+' ('+r3.reason+')');
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Невалидный ИНН ЮЛ',
+            desc:'Сломанные ИНН не проходят валидацию',
+            run:function(iterations){
+                var errors=[];
+                for(var i=0;i<iterations;i++){
+                    var inn=Gen.innul(true);
+                    var isValid=Val.innul(inn);
+                    if(isValid)errors.push('Невалидный ИНН прошёл валидацию: '+inn);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Невалидный ИНН ФЛ',
+            desc:'Сломанные ИНН не проходят валидацию',
+            run:function(iterations){
+                var errors=[];
+                for(var i=0;i<iterations;i++){
+                    var inn=Gen.innfl(true);
+                    var isValid=Val.innfl(inn);
+                    if(isValid)errors.push('Невалидный ИНН прошёл валидацию: '+inn);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Невалидный СНИЛС',
+            desc:'Сломанные СНИЛС не проходят валидацию',
+            run:function(iterations){
+                var errors=[];
+                for(var i=0;i<iterations;i++){
+                    var snils=Gen.snils(true);
+                    var isValid=Val.snils(snils);
+                    if(isValid)errors.push('Невалидный СНИЛС прошёл валидацию: '+snils);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        },
+        {
+            name:'Невалидный ОГРН',
+            desc:'Сломанные ОГРН не проходят валидацию',
+            run:function(iterations){
+                var errors=[];
+                for(var i=0;i<iterations;i++){
+                    var ogrn=Gen.ogrn(true);
+                    var isValid=Val.ogrn(ogrn);
+                    if(isValid)errors.push('Невалидный ОГРН прошёл валидацию: '+ogrn);
+                }
+                return{total:iterations,passed:iterations-errors.length,errors:errors};
+            }
+        }
+    ],
+    
+    runAll:function(){
+        if(this.isRunning)return;
+        this.isRunning=true;
+        this.results=[];
+        
+        var iterations=parseInt(document.getElementById('test-iterations').value,10)||10000;
+        var totalTests=this.tests.length;
+        var currentTest=0;
+        
+        document.getElementById('test-progress').style.display='block';
+        document.getElementById('test-status').textContent='Выполняется...';
+        document.getElementById('test-results').innerHTML='';
+        
+        var self=this;
+        
+        function runNext(){
+            if(currentTest>=totalTests){
+                self.isRunning=false;
+                document.getElementById('test-progress').style.display='none';
+                document.getElementById('test-status').textContent='Тестирование завершено';
+                self.renderResults();
+                return;
+            }
+            
+            var test=self.tests[currentTest];
+            var progress=Math.round((currentTest/totalTests)*100);
+            document.getElementById('test-progress-label').textContent='Тест '+(currentTest+1)+' из '+totalTests+': '+test.name;
+            document.getElementById('test-progress-percent').textContent=progress+'%';
+            document.getElementById('test-progress-bar').style.width=progress+'%';
+            
+            setTimeout(function(){
+                var startTime=Date.now();
+                var result=test.run(iterations);
+                var duration=Date.now()-startTime;
+                
+                self.results.push({
+                    name:test.name,
+                    desc:test.desc,
+                    iterations:iterations,
+                    passed:result.passed,
+                    failed:result.total-result.passed,
+                    errors:result.errors.slice(0,10),
+                    duration:duration
+                });
+                
+                currentTest++;
+                runNext();
+            },10);
+        }
+        
+        runNext();
+    },
+    
+    renderResults:function(){
+        var container=document.getElementById('test-results');var summary=document.getElementById('test-summary');
+        if(this.results.length===0){container.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:40px">Нет результатов</div>';summary.textContent='';return}
+        var tPass=0,tFail=0,html='';
+        for(var i=0;i<this.results.length;i++){
+            var r=this.results[i];tPass+=r.passed;tFail+=r.failed;
+            var pct=r.iterations>0?Math.round((r.passed/r.iterations)*100):0;
+            var sc=r.failed===0?'pass':'fail';var st=r.failed===0?'✅ PASS':'❌ FAIL';
+            html+='<div class="test-result-row">'+
+                '<div><div class="test-name">'+escapeHtml(r.name)+'</div><div class="test-desc">'+escapeHtml(r.desc)+'</div></div>'+
+                '<div class="test-stat">'+r.iterations.toLocaleString()+'</div>'+
+                '<div class="test-stat pass">'+r.passed.toLocaleString()+'</div>'+
+                '<div class="test-stat '+(r.failed>0?'fail':'')+'">'+r.failed.toLocaleString()+'</div>'+
+                '<div class="test-stat">'+pct+'%</div>'+
+                '<div class="test-status-badge '+sc+'">'+st+'</div>'+
+                (r.errors.length>0?'<button class="test-details-btn" onclick="TestRunner.toggleErrors('+i+')">Показать ошибки ('+r.errors.length+')</button>':'')+
+                '</div>';
+            if(r.errors.length>0){
+                html+='<details class="test-errors-inline" id="test-err-'+i+'"><summary style="cursor:pointer;font-weight:600;margin-bottom:8px">Детали ошибок</summary>';
+                for(var j=0;j<r.errors.length;j++)html+='<div class="test-error-item">'+escapeHtml(r.errors[j])+'</div>';
+                html+='</details>';
+            }
+        }
+        container.innerHTML=html;
+        var totalTests=this.results.length;var passedTests=this.results.filter(function(r){return r.failed===0}).length;
+        summary.innerHTML='<strong>Итого:</strong> '+passedTests+' из '+totalTests+' тестов пройдено | <span style="color:var(--success)">'+tPass.toLocaleString()+' успешно</span> | <span style="color:var(--danger)">'+tFail.toLocaleString()+' ошибок</span>';
+    },
+    toggleErrors:function(idx){
+        var el=document.getElementById('test-err-'+idx);
+        if(el)el.open=!el.open;
+    },
+    
+    clearResults:function(){
+        this.results=[];
+        document.getElementById('test-results').innerHTML='<div style="text-align:center;color:var(--text-muted);padding:40px;font-size:13px">Нажмите «Запустить все тесты» для начала проверки</div>';
+        document.getElementById('test-summary').textContent='';
+        document.getElementById('test-status').textContent='Готов к запуску';
+    }
+};
+
+/* ============================================================
+ *  SECTION 19: INIT
+ * ============================================================ */
+window.onload=function(){
+    renderSchema();
+    renderPresets();
+    generateAll();
+    renderHistory();
+    updateDateUI();
+    updateCredUI();
+};
+</script>
+</body>
+</html>

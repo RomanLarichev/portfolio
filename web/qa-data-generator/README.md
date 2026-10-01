@@ -391,18 +391,16 @@ ART-{{letters:2}}{{digits:4}} → ART-QF5721
 ## 📦 Установка
 
 ### Быстрый старт
-1. Скачайте `qa-data-generator.htm` из раздела **Releases**
+1. Скачайте `qa-data-generator.html` из раздела **Releases**
 2. Откройте двойным кликом в любом современном браузере
 3. Готово! Никакой установки, никаких зависимостей
 
 ### Из исходников
 ```bash
-git clone https://github.com/RomanLarichev/portfolio/tree/main/web/qa-data-generator
+git clone https://github.com/RomanLarichev/qa-data-generator.git
 cd qa-data-generator
-# Просто откройте qa-data-generator.htm в браузере
+# Просто откройте qa-data-generator.html в браузере
 ```
-
-> Не забудьте заменить `<your-github-username>` на ваш реальный GitHub username.
 
 ---
 
@@ -608,18 +606,16 @@ Built-in self-diagnostic framework:
 ## 📦 Installation
 
 ### Quick Start
-1. Download `qa-data-generator.htm` from **Releases**
+1. Download `qa-data-generator.html` from **Releases**
 2. Open with double-click in any modern browser
 3. Done! No installation, no dependencies
 
 ### From Source
 ```bash
-git clone https://github.com/RomanLarichev/portfolio/tree/main/web/qa-data-generator
+git clone https://github.com/RomanLarichev/qa-data-generator.git
 cd qa-data-generator
-# Just open qa-data-generator.htm in your browser
+# Just open qa-data-generator.html in your browser
 ```
-
-> Replace `<your-github-username>` with your actual GitHub username.
 
 ---
 

@@ -554,7 +554,16 @@ var DICT={
     firstnames_f:['Анастасия','Мария','Анна','Виктория','Дарья','Елизавета','Полина','Софья','Александра','Алина','Ксения','Екатерина','Вероника','Юлия','Марина','Валерия','Евгения','Ульяна','Ирина','Ольга','Наталья','Татьяна','Светлана','Людмила','Галина','Маргарита','Карина','Диана','Ангелина','Варвара','Арина','Яна','Кристина','Василиса','Алёна','Елена','Зоя','Лариса','Надежда','Тамара'],
     patronymics_m:['Александрович','Дмитриевич','Сергеевич','Михайлович','Андреевич','Алексеевич','Ильич','Николаевич','Владимирович','Евгеньевич','Иванович','Петрович','Юрьевич','Константинович','Викторович','Павлович','Романович','Олегович','Фёдорович','Степанович','Анатольевич','Васильевич','Геннадьевич','Борисович','Максимович'],
     patronymics_f:['Александровна','Дмитриевна','Сергеевна','Михайловна','Андреевна','Алексеевна','Ильинична','Николаевна','Владимировна','Евгеньевна','Ивановна','Петровна','Юрьевна','Константиновна','Викторовна','Павловна','Романовна','Олеговна','Фёдоровна','Степановна','Анатольевна','Васильевна','Геннадьевна','Борисовна','Максимовна'],
-    legalForms:['ООО','АО','ПАО','ООО','ООО','АО','ООО'],
+    /* === ИСПРАВЛЕНО: ОПФ теперь с расшифровкой (юридически корректно) === */
+    legalForms:[
+        {short:'ООО',full:'Общество с ограниченной ответственностью'},
+        {short:'АО',full:'Акционерное общество'},
+        {short:'ПАО',full:'Публичное акционерное общество'},
+        {short:'ООО',full:'Общество с ограниченной ответственностью'},
+        {short:'ООО',full:'Общество с ограниченной ответственностью'},
+        {short:'АО',full:'Акционерное общество'},
+        {short:'ООО',full:'Общество с ограниченной ответственностью'}
+    ],
     
     companyNounsByGender:{
         m:['Проект','Инжиниринг','Сервис','Консалтинг','Альянс','Стандарт','Строй','Вектор','Ресурс','Траст','Холдинг','Трест','Концерн','Банк','Фонд'],
@@ -572,7 +581,6 @@ var DICT={
     
     emailDomains:['example.test','mail.test','corp.test','qa.local'],
 
-    /* === Passphrase словарь для генератора паролей === */
     passWords:['солнце','ветер','дерево','камень','река','море','гора','лес','поле','огонь','вода','земля','небо','звезда','луна','цветок','птица','зверь','рыба','дом','окно','дверь','стол','стул','книга','ручка','бумага','стена','пол','потолок','мост','путь','дорога','берег','остров','сад','лебедь','сокол','тигр','лев','медведь','лиса','волк','заяц','кот','пёс','конь','корова','овца','коза','свинья','курица','петух','утка','гусь'],
 
     regions:[
@@ -598,7 +606,6 @@ var DICT={
         {code:'51',name:'Мурманская область',city:'г. Мурманск',zip:'18'}
     ],
 
-    /* === ИСПРАВЛЕНО: словари улиц структурированы по грамматическому роду === */
     streetTypesByGender: {
         m: ['пр-кт', 'пер.', 'бул.', 'пр.', 'пр-д', 'тракт', 'мкр.'],
         f: ['ул.', 'наб.', 'аллея'],
@@ -617,7 +624,6 @@ var DICT={
         'г. Санкт-Петербург':['Невский проспект','Литейный проспект','Московский проспект','Вознесенский проспект','Загородный проспект','Каменоостровский проспект','Ленсовета','Бабушкина','Коллонтай','Большой проспект В.О.','Средний проспект В.О.','Литейная','Пулковская','Петроградская','Василеостровская']
     },
 
-    /* === БАНКОВСКИЕ РЕКВИЗИТЫ РФ (используется только для режима useRealBic) === */
     banks:[
         {bic:'044525225',name:'ПАО Сбербанк',corrAccount:'30101810400000000225',city:'Москва'},
         {bic:'044525974',name:'Банк ВТБ (ПАО)',corrAccount:'30101810145250000974',city:'Москва'},
@@ -666,33 +672,29 @@ var DICT={
  *  SECTION 4: BASE GENERATORS
  * ============================================================ */
 var Gen={
-    /* === детерминированный UUID при заданном Seed === */
-        uuid:function(){
-        if(_rng){ // Если задан Seed, генерируем детерминированный UUID
-            var hex='0123456789ABCDEF'; // Явно заглавные латинские буквы
+    uuid:function(){
+        if(_rng){
+            var hex='0123456789ABCDEF';
             var u='';
             for(var i=0;i<36;i++){
                 if(i===8||i===13||i===18||i===23){
                     u+='-';
                 }else if(i===14){
-                    u+='4'; // Версия UUID v4
+                    u+='4';
                 }else if(i===19){
-                    // Вариант (8, 9, A, B)
                     var variantIndex=rndInt(0,3);
-                    u+=hex[variantIndex+8]; // 8, 9, 10(A), 11(B)
+                    u+=hex[variantIndex+8];
                 }else{
                     u+=hex[rndInt(0,15)];
                 }
             }
             return u;
         }
-        // Без seed — используем криптографически стойкий генератор
         try{
             if(typeof crypto!=='undefined'&&crypto.randomUUID){
                 return crypto.randomUUID().toUpperCase();
             }
         }catch(e){}
-        // Fallback
         return'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
             var r=rndInt(0,15);
             var v=c==='x'?r:(r&0x3|0x8);
@@ -720,58 +722,90 @@ var Gen={
 };
 
 /* ============================================================
- *  SECTION 4.5: PATTERN GENERATOR (extended)
+ *  SECTION 4.5: PATTERN GENERATOR (с локальным кэшем)
  * ============================================================ */
 function processPatternLiterals(text){
     return text.replace(/A/g,function(){return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[rndInt(0,25)]})
                .replace(/9/g,function(){return ''+rndInt(0,9)});
 }
-function processPatternToken(token){
+
+function processPatternToken(token, cache){
+    token=token.trim().toLowerCase();
+
     if(token==='uuid')return Gen.uuid();
     if(token==='date'){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1<10?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate()}
     if(token==='time'){var d=new Date();return (d.getHours()<10?'0':'')+d.getHours()+'-'+(d.getMinutes()<10?'0':'')+d.getMinutes()+'-'+(d.getSeconds()<10?'0':'')+d.getSeconds()}
+
     if(token==='inn_fl')return Gen.innfl(false);
     if(token==='inn_ul')return Gen.innul(false);
-    if(token==='snils')return Gen.snils(false);
+    if(token==='snils')return Gen.snils(false).replace(/\D/g,'');
     if(token==='ogrn')return Gen.ogrn(false);
     if(token==='kpp')return Gen.kpp();
     if(token==='phone')return Gen.phone();
     if(token==='passport')return Gen.passport();
-    if(token==='first_name'||token==='last_name'||token==='middle_name'||token==='full_name'){
-        if(!generatePattern._cachedPerson)generatePattern._cachedPerson=Person.generate({});
-        var p=generatePattern._cachedPerson;
+    if(token==='email')return Gen.email();
+    if(token==='bic'){var b=Bank.generate({});return b.bic}
+    if(token==='account'){var b=Bank.generate({});return b.account}
+
+    if(token==='first_name'||token==='last_name'||token==='middle_name'||token==='full_name'||token==='login'||token==='password'){
+        if(!cache.person){
+            cache.person=Person.generate({
+                loginStyle:'first.last',
+                len:12,
+                upper:true,
+                lower:true,
+                digit:true,
+                special:true,
+                mode:_rng?'seeded':'secure'
+            });
+        }
+        var p=cache.person;
         if(token==='first_name')return p.firstName;
         if(token==='last_name')return p.lastName;
         if(token==='middle_name')return p.middleName;
-        return p.fullName;
+        if(token==='full_name')return p.fullName;
+        if(token==='login')return p.login;
+        if(token==='password')return p.password;
     }
-    if(token==='company_name'||token==='company_short'||token==='company_inn'||token==='company_kpp'||token==='company_ogrn'){
-        if(!generatePattern._cachedCompany)generatePattern._cachedCompany=Company.generate({});
-        var c=generatePattern._cachedCompany;
+
+    if(token==='company_name'||token==='company_short'||token==='company_inn'||token==='company_kpp'||token==='company_ogrn'||token==='company_email'){
+        if(!cache.company){
+            cache.company=Company.generate({});
+        }
+        var c=cache.company;
         if(token==='company_name')return c.name;
         if(token==='company_short')return c.shortName;
         if(token==='company_inn')return c.inn;
         if(token==='company_kpp')return c.kpp;
-        return c.ogrn;
+        if(token==='company_ogrn')return c.ogrn;
+        if(token==='company_email')return c.email;
     }
+
     var m=token.match(/^(\w+):(\d+)(?::(\d+))?$/);
     if(m){
         var type=m[1],a=parseInt(m[2],10),b=m[3]?parseInt(m[3],10):null;
-        if(type==='DIGIT'||type==='digits'){var s='';var len=b||a;for(var i=0;i<len;i++)s+=rndInt(0,9);return s}
-        if(type==='LETTER'||type==='letters'){var s='';var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ';var len=b||a;for(var i=0;i<len;i++)s+=chars[rndInt(0,25)];return s}
+        if(type==='digit'||type==='digits'){var s='';var len=b||a;for(var i=0;i<len;i++)s+=rndInt(0,9);return s}
+        if(type==='letter'||type==='letters'){var s='';var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ';var len=b||a;for(var i=0;i<len;i++)s+=chars[rndInt(0,25)];return s}
         if(type==='number'){if(b!==null)return rndInt(a,b).toString();return rndInt(0,a).toString()}
     }
+
     return '{{'+token+'}}';
 }
+
 function generatePattern(pattern){
     if(!pattern)return'';
+    // ЛОКАЛЬНЫЙ кэш — живёт только в рамках одного вызова функции.
+    // Это гарантирует, что в одной строке все токены согласованы,
+    // но между строками (в batch) будут разные значения.
+    var localCache={person:null,company:null};
+
     var result='';
     var lastIdx=0;
     var regex=/\{\{(.*?)\}\}/g;
     var match;
     while((match=regex.exec(pattern))!==null){
         result+=processPatternLiterals(pattern.substring(lastIdx,match.index));
-        result+=processPatternToken(match[1]);
+        result+=processPatternToken(match[1], localCache);
         lastIdx=regex.lastIndex;
     }
     result+=processPatternLiterals(pattern.substring(lastIdx));
@@ -860,24 +894,29 @@ var Person={
 };
 
 /* ============================================================
- *  SECTION 6: COMPANY ENTITY
+ *  SECTION 6: COMPANY ENTITY (юридически корректная ОПФ)
  * ============================================================ */
 var Company={
     generate:function(opts){
         opts=opts||{};
-        var form=rndPick(DICT.legalForms);
+        var formObj=rndPick(DICT.legalForms);
         var genders=['m','f','n','p'];
         var gender=rndPick(genders);
         var noun=rndPick(DICT.companyNounsByGender[gender]);
         var adj=rndPick(DICT.companyAdjByGender[gender]);
-        var name=form+' «'+adj+' '+noun+'»';
-        var shortBase=noun.length>4?noun.substr(0,4):noun;
-        var shortName=form+' «'+shortBase+'»';
-        var emailName=this.transliterate(noun).toLowerCase().replace(/[^a-z]/g,'');
-        if(!emailName)emailName='company';
+        
+        // Полное наименование: расшифровка ОПФ + «Прилагательное Существительное»
+        var fullName=formObj.full+' «'+adj+' '+noun+'»';
+        // Краткое наименование: сокращение ОПФ + «Прилагательное Существительное» (полное слово!)
+        var shortName=formObj.short+' «'+adj+' '+noun+'»';
+        
+        // Email от ПОЛНОГО названия существительного (транслит)
+        var emailName=this.transliterate(noun).toLowerCase().replace(/[^a-z]/g,'')||'company';
+        
         return{
-            legalForm:form,
-            name:name,
+            legalForm:formObj.short,
+            legalFormFull:formObj.full,
+            name:fullName,
             shortName:shortName,
             inn:Gen.innul(opts.invalid),
             kpp:Gen.kpp(),
@@ -1164,9 +1203,10 @@ var PERSON_FIELDS=[
     {id:'customPattern',label:'Custom Pattern',generator:'customPattern',exportName:'custom_field'}
 ];
 var COMPANY_FIELDS=[
-    {id:'legalForm',label:'ОПФ',generator:'company.legalForm',exportName:'legal_form'},
-    {id:'name',label:'Название',generator:'company.name',exportName:'name'},
-    {id:'shortName',label:'Краткое название',generator:'company.shortName',exportName:'short_name'},
+    {id:'legalForm',label:'ОПФ (краткое)',generator:'company.legalForm',exportName:'legal_form'},
+    {id:'legalFormFull',label:'ОПФ (полное)',generator:'company.legalFormFull',exportName:'legal_form_full'},
+    {id:'name',label:'Полное наименование',generator:'company.name',exportName:'full_name'},
+    {id:'shortName',label:'Краткое наименование',generator:'company.shortName',exportName:'short_name'},
     {id:'inn',label:'ИНН ЮЛ',generator:'company.inn',exportName:'inn'},
     {id:'kpp',label:'КПП',generator:'company.kpp',exportName:'kpp'},
     {id:'ogrn',label:'ОГРН',generator:'company.ogrn',exportName:'ogrn'},
@@ -1221,9 +1261,10 @@ var DEFAULT_PERSON_SCHEMA={
 var DEFAULT_COMPANY_SCHEMA={
     entityType:'company',
     fields:[
-        {id:'legalForm',label:'ОПФ',generator:'company.legalForm',enabled:true,exportName:'legal_form',nullable:0,empty:0},
-        {id:'name',label:'Название',generator:'company.name',enabled:true,exportName:'name',nullable:0,empty:0},
-        {id:'shortName',label:'Краткое название',generator:'company.shortName',enabled:false,exportName:'short_name',nullable:0,empty:0},
+        {id:'legalForm',label:'ОПФ (краткое)',generator:'company.legalForm',enabled:true,exportName:'legal_form',nullable:0,empty:0},
+        {id:'legalFormFull',label:'ОПФ (полное)',generator:'company.legalFormFull',enabled:false,exportName:'legal_form_full',nullable:0,empty:0},
+        {id:'name',label:'Полное наименование',generator:'company.name',enabled:true,exportName:'full_name',nullable:0,empty:0},
+        {id:'shortName',label:'Краткое наименование',generator:'company.shortName',enabled:true,exportName:'short_name',nullable:0,empty:0},
         {id:'inn',label:'ИНН ЮЛ',generator:'company.inn',enabled:true,exportName:'inn',nullable:0,empty:0},
         {id:'kpp',label:'КПП',generator:'company.kpp',enabled:true,exportName:'kpp',nullable:0,empty:0},
         {id:'ogrn',label:'ОГРН',generator:'company.ogrn',enabled:true,exportName:'ogrn',nullable:0,empty:0},
@@ -1265,7 +1306,7 @@ function switchEntityType(type){
             currentSchema.fields.push({id:'p_'+f.id,label:'[ФЛ] '+f.label,generator:f.generator,enabled:enabled,exportName:'person_'+f.exportName,nullable:0,empty:0});
         });
         COMPANY_FIELDS.forEach(function(f){
-            var enabled=(f.id==='name'||f.id==='inn'||f.id==='address.full'||f.id==='address.city');
+            var enabled=(f.id==='name'||f.id==='shortName'||f.id==='inn'||f.id==='address.full'||f.id==='address.city');
             currentSchema.fields.push({id:'c_'+f.id,label:'[ЮЛ] '+f.label,generator:f.generator,enabled:enabled,exportName:'company_'+f.exportName,nullable:0,empty:0});
         });
         [
@@ -1575,6 +1616,7 @@ function generateFieldValue(field,personData,companyData,addressData,bankData,op
         case 'person.phone':return personData?personData.phone:null;
         case 'person.email':return personData?personData.email:null;
         case 'company.legalForm':return companyData?companyData.legalForm:null;
+        case 'company.legalFormFull':return companyData?companyData.legalFormFull:null;
         case 'company.name':return companyData?companyData.name:null;
         case 'company.shortName':return companyData?companyData.shortName:null;
         case 'company.inn':return companyData?companyData.inn:null;
@@ -2056,9 +2098,6 @@ function generatePatternStandalone(){
         return;
     }
     
-    generatePattern._cachedPerson=null;
-    generatePattern._cachedCompany=null;
-    
     var html='';
     for(var i=0;i<count;i++){
         var res=generatePattern(pattern);
@@ -2112,10 +2151,13 @@ function genPerson(){
 }
 function copyPerson(){var el=document.getElementById('val-person');if(copyToClipboard(el.innerText))showToast('Скопировано')}
 
+/* === ИСПРАВЛЕНО: карточка компании показывает полное и краткое наименования + обе ОПФ === */
 function renderCompanyCard(c){
     var el=document.getElementById('val-company');
-    el.innerHTML='<div><strong>Название:</strong> '+escapeHtml(c.name)+'</div>'+
-        '<div><strong>Форма:</strong> '+escapeHtml(c.legalForm)+'</div>'+
+    el.innerHTML='<div><strong>Полное наименование:</strong> '+escapeHtml(c.name)+'</div>'+
+        '<div><strong>Краткое наименование:</strong> '+escapeHtml(c.shortName)+'</div>'+
+        '<div><strong>ОПФ (полное):</strong> '+escapeHtml(c.legalFormFull)+'</div>'+
+        '<div><strong>ОПФ (краткое):</strong> '+escapeHtml(c.legalForm)+'</div>'+
         '<div><strong>ИНН:</strong> '+escapeHtml(c.inn)+'</div>'+
         '<div><strong>КПП:</strong> '+escapeHtml(c.kpp)+'</div>'+
         '<div><strong>ОГРН:</strong> '+escapeHtml(c.ogrn)+'</div>'+
@@ -2161,8 +2203,6 @@ function generateBatch(){
     var ratio=parseInt(document.getElementById('mixed-ratio').value,10)||10;
     var seed=document.getElementById('batch-seed').value;
     setSeed(seed?parseInt(seed,10):null);
-    generatePattern._cachedPerson=null;
-    generatePattern._cachedCompany=null;
     lastBatchRows=[];
     for(var i=0;i<count;i++){
         var invalid=false;
@@ -2509,20 +2549,8 @@ var TestRunner={
                 return{total:iterations,passed:iterations-errors.length,errors:errors};
             }
         },
-        {
-            name:'Company (согласованность)',
-            desc:'Название грамматически корректно',
-            run:function(iterations){
-                var errors=[];
-                var assert=TestRunner.assert;
-                for(var i=0;i<iterations;i++){
-                    var company=Company.generate({});
-                    var r1=assert.match(company.name,/«.*»/,'Название должно содержать кавычки «»');
-                    if(!r1.pass)errors.push(r1.message+' : '+company.name);
-                }
-                return{total:iterations,passed:iterations-errors.length,errors:errors};
-            }
-        },
+        /* === ИСПРАВЛЕНО: тест проверяет юридическую корректность ОПФ === */
+        {name:'Company (согласованность)',desc:'Полное и краткое наименования корректны',run:function(it){var errors=[],assert=TestRunner.assert;for(var i=0;i<it;i++){var c=Company.generate({});var r1=assert.match(c.name,/«.*»/,'Полное наименование должно содержать кавычки «»');if(!r1.pass)errors.push(r1.message+' : '+c.name);var r2=assert.match(c.shortName,/^(ООО|АО|ПАО) «.*»$/,'Краткое наименование должно начинаться с ОПФ');if(!r2.pass)errors.push(r2.message+' : '+c.shortName);var r3=assert.match(c.name,/^(Общество с ограниченной ответственностью|Акционерное общество|Публичное акционерное общество) «/,'Полное наименование должно начинаться с расшифровки ОПФ');if(!r3.pass)errors.push(r3.message+' : '+c.name)}return{total:it,passed:it-errors.length,errors:errors}}},
         {
             name:'Адрес РФ',
             desc:'Структура: индекс, регион, город, улица, дом',

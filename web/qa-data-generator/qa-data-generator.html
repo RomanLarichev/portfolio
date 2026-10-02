@@ -667,19 +667,37 @@ var DICT={
  * ============================================================ */
 var Gen={
     /* === детерминированный UUID при заданном Seed === */
-    uuid:function(){
+        uuid:function(){
         if(_rng){ // Если задан Seed, генерируем детерминированный UUID
-            var h='0123456789abcdef',u='';
+            var hex='0123456789ABCDEF'; // Явно заглавные латинские буквы
+            var u='';
             for(var i=0;i<36;i++){
-                if(i===8||i===13||i===18||i===23)u+='-';
-                else if(i===14)u+='4';
-                else if(i===19)u+=h[(rndInt(0,3)|8)];
-                else u+=h[rndInt(0,15)];
+                if(i===8||i===13||i===18||i===23){
+                    u+='-';
+                }else if(i===14){
+                    u+='4'; // Версия UUID v4
+                }else if(i===19){
+                    // Вариант (8, 9, A, B)
+                    var variantIndex=rndInt(0,3);
+                    u+=hex[variantIndex+8]; // 8, 9, 10(A), 11(B)
+                }else{
+                    u+=hex[rndInt(0,15)];
+                }
             }
-            return u.toUpperCase();
+            return u;
         }
-        try{if(typeof crypto!=='undefined'&&crypto.randomUUID)return crypto.randomUUID().toUpperCase()}catch(e){}
-        return'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=rndInt(0,15);var v=c==='x'?r:(r&0x3|0x8);return v.toString(16).toUpperCase()})
+        // Без seed — используем криптографически стойкий генератор
+        try{
+            if(typeof crypto!=='undefined'&&crypto.randomUUID){
+                return crypto.randomUUID().toUpperCase();
+            }
+        }catch(e){}
+        // Fallback
+        return'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
+            var r=rndInt(0,15);
+            var v=c==='x'?r:(r&0x3|0x8);
+            return'0123456789ABCDEF'[v];
+        });
     },
     innul:function(invalid){invalid=invalid||false;var inn=''+(rndInt(1,9));for(var i=0;i<8;i++)inn+=rndInt(0,9);var w=[2,4,10,3,5,9,4,6,8];var s=0;for(var i=0;i<9;i++)s+=parseInt(inn[i])*w[i];var c=(s%11)%10;if(invalid)c=(c+1)%10;return inn+c},
     innfl:function(invalid){invalid=invalid||false;var inn=''+(rndInt(1,9));for(var i=0;i<9;i++)inn+=rndInt(0,9);var w11=[7,2,4,10,3,5,9,4,6,8];var s11=0;for(var i=0;i<10;i++)s11+=parseInt(inn[i])*w11[i];var n11=(s11%11)%10;var w12=[3,7,2,4,10,3,5,9,4,6,8];var s12=0;for(var i=0;i<10;i++)s12+=parseInt(inn[i])*w12[i];s12+=n11*8;var n12=(s12%11)%10;if(invalid)n12=(n12+1)%10;return inn+n11+n12},

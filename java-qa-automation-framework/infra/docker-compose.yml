@@ -1,0 +1,14 @@
+services:
+  wiremock:
+    image: wiremock/wiremock:3.9.1
+    ports:
+      - "9999:8080"
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: qa_demo
+      POSTGRES_USER: qa_user
+      POSTGRES_PASSWORD: qa_password
+    ports:
+      - "5432:5432"

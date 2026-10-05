@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore PortfolioQa.sln
+      - name: Build
+        run: dotnet build PortfolioQa.sln --configuration Release --no-restore
+      - name: Install Playwright browser
+        shell: pwsh
+        run: |
+          ./tests/PortfolioQa.Tests/bin/Release/net8.0/playwright.ps1 install --with-deps chromium
+      - name: Test
+        run: dotnet test PortfolioQa.sln --configuration Release --no-build --collect:"XPlat Code Coverage"

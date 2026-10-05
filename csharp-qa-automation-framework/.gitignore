@@ -1,0 +1,15 @@
+bin/
+obj/
+TestResults/
+playwright-report/
+artifacts/
+traces/
+.vs/
+.idea/
+*.user
+*.suo
+.env
+.env.*
+*.log
+coverage*.xml
+*.trx
